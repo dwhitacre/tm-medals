@@ -6,7 +6,7 @@ export class Db {
   constructor() {
     this.pool = new Pool({
       connectionString: process.env.DATABASE_CONNSTR,
-      ssl: !!process.env.DATABASE_SSL,
+      ssl: process.env.DATABASE_SSL ? { rejectUnauthorized: false } : undefined,
     });
   }
 
