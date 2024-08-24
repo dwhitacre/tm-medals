@@ -1,6 +1,5 @@
 {{- if .Values.ingress.enabled -}}
 {{- $fullName := include "tm-medals.fullname" . -}}
-# {{- $appSvcPort := .Values.app.service.port -}}
 {{- $apiSvcPort := .Values.api.service.port -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
@@ -29,13 +28,6 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          # - path: /
-          #   pathType: Prefix
-          #   backend:
-          #     service:
-          #       name: {{ $fullName }}
-          #       port:
-          #         number: {{ $appSvcPort }}
           - path: /api
             pathType: Prefix
             backend:

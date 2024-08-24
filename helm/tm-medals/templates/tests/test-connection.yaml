@@ -8,10 +8,6 @@ metadata:
     "helm.sh/hook": test-success
 spec:
   containers:
-    # - name: wget-app
-    #   image: busybox
-    #   command: ['wget']
-    #   args: ['{{ include "tm-medals.fullname" . }}:{{ .Values.app.service.port }}']
     - name: wget-api
       image: busybox
       command: ['wget']

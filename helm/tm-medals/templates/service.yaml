@@ -7,10 +7,6 @@ metadata:
 spec:
   type: {{ .Values.service.type }}
   ports:
-    # - port: {{ .Values.app.service.port }}
-    #   targetPort: app-http
-    #   protocol: TCP
-    #   name: app-http
     - port: {{ .Values.api.service.port }}
       targetPort: api-http
       protocol: TCP
