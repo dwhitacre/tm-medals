@@ -10,10 +10,14 @@ services:
       DATABASE_CONNSTR: postgres://tmmedals:Passw0rd!@db:5432/tmmedals?pool_max_conns=10
       ADMIN_KEY: developer-test-key
       TMIO_URL: http://tmiosim:8100
+      HOST: 0.0.0.0
     ports:
       - 8081:8081
     networks:
       - server-network
+    depends_on:
+      - db
+      - tmiosim
   # app:
   #   build:
   #     context: app
@@ -32,6 +36,8 @@ services:
       - ./ingresssim/nginx.conf:/etc/nginx/nginx.conf
     networks:
       - server-network
+    depends_on:
+      - api
   db:
     image: postgres:16
     restart: unless-stopped

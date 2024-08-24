@@ -9,6 +9,8 @@ metadata:
     {{- include "tm-medals.labels" . | nindent 4 }}
   {{- with .Values.ingress.annotations }}
   annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
     {{- toYaml . | nindent 4 }}
   {{- end }}
 spec:
@@ -28,7 +30,7 @@ spec:
     - host: {{ .host | quote }}
       http:
         paths:
-          - path: /api
+          - path: /api(/|$)(.*)
             pathType: Prefix
             backend:
               service:

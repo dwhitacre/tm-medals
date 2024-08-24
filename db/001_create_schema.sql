@@ -4,7 +4,8 @@ create table Map(
   AuthorTime int not null,
   Name varchar not null default '',
   Campaign varchar,
-  CampaignIndex int
+  CampaignIndex int,
+  DateModified date not null default now()
 );
 
 create table MedalTimes(
@@ -13,22 +14,26 @@ create table MedalTimes(
   MedalTime int not null default -1,
   CustomMedalTime int not null default -1,
   Reason varchar not null default '',
+  DateModified date not null default now(),
   foreign key(MapUid) references Map(MapUid)
 );
 
 create table Players(
   AccountId varchar not null primary key,
-  Name varchar not null default ''
+  Name varchar not null default '',
+  DateModified date not null default now()
 );
 
 create table Zones(
   ZoneId varchar not null primary key,
-  Name varchar not null default ''
+  Name varchar not null default '',
+  DateModified date not null default now()
 );
 
 create table PlayerMedalTimes(
   AccountId varchar not null primary key,
   MedalTimesId int not null,
+  DateModified date not null default now(),
   foreign key(MedalTimesId) references MedalTimes(Id),
   foreign key(AccountId) references Players(AccountId)
 );
@@ -36,6 +41,7 @@ create table PlayerMedalTimes(
 create table ZoneMedalTimes(
   ZoneId varchar not null primary key,
   MedalTimesId int not null,
+  DateModified date not null default now(),
   foreign key(MedalTimesId) references MedalTimes(Id),
   foreign key(ZoneId) references Zones(ZoneId)
 );

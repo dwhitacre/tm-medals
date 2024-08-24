@@ -1,20 +1,19 @@
-FROM golang:1.22 AS build
-
+FROM oven/bun:1 AS base
 WORKDIR /app
 
-COPY go.mod go.sum ./
-RUN go mod download
+FROM base AS build
+WORKDIR /app
 
-COPY *.go ./
-COPY api/*.go ./api/
-RUN CGO_ENABLED=0 GOOS=linux go build -o /tm-medals-api
+COPY package.json bun.lockb ./
+RUN bun install --frozen-lockfile --production
 
-FROM gcr.io/distroless/base-debian12
+FROM base AS release
+WORKDIR /app
 
-WORKDIR /
-COPY --from=build /tm-medals-api /tm-medals-api
+COPY --from=build /app/node_modules ./node_modules
+COPY . .
 
 EXPOSE 8080
-USER nonroot:nonroot
+USER bun
 
-ENTRYPOINT ["/tm-medals-api"]
+ENTRYPOINT ["bun", "run", "index.ts"]

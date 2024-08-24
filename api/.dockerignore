@@ -1,7 +1,11 @@
 *
 .*
 
-!go.mod
-!go.sum
-!*.go
-!*/*.go
+!bun.lockb
+!package.json
+!tsconfig.json
+!index.ts
+!domain/*.ts
+!middleware/*.ts
+!routes/*.ts
+!services/*.ts

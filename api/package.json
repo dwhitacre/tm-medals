@@ -1,0 +1,15 @@
+{
+  "name": "api",
+  "module": "index.ts",
+  "devDependencies": {
+    "@types/bun": "^1.1.7"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  },
+  "scripts": {
+    "start": "bun run index.ts",
+    "watch": "bun run --watch index.ts"
+  },
+  "type": "module"
+}

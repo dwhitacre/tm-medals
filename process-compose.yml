@@ -3,10 +3,10 @@ version: "0.5"
 processes:
   api:
     working_dir: api
-    command: go run .
+    command: bun run watch
     readiness_probe:
       http_get:
-        host: 127.0.0.1
+        host: localhost
         scheme: http
         path: "/ready"
         port: 8081
@@ -15,6 +15,7 @@ processes:
       - "ADMIN_KEY=developer-test-key"
       - "HOST=localhost"
       - "TMIO_URL=http://localhost:8100"
+      - "DEBUG=true"
   # app:
   #   working_dir: app
   #   command: yarn start
