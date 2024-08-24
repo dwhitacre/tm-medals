@@ -27,25 +27,6 @@ spec:
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
       containers:
-        # - name: app
-        #   securityContext:
-        #     {{- toYaml .Values.app.securityContext | nindent 12 }}
-        #   image: "{{ .Values.app.image.repository }}:{{ .Values.app.image.tag }}"
-        #   imagePullPolicy: {{ .Values.app.image.pullPolicy }}
-        #   ports:
-        #     - name: app-http
-        #       containerPort: 80
-        #       protocol: TCP
-        #   livenessProbe:
-        #     httpGet:
-        #       path: /ready
-        #       port: app-http
-        #   readinessProbe:
-        #     httpGet:
-        #       path: /ready
-        #       port: app-http
-        #   resources:
-        #     {{- toYaml .Values.app.resources | nindent 12 }}
         - name: api
           securityContext:
             {{- toYaml .Values.api.securityContext | nindent 12 }}
