@@ -38,6 +38,8 @@ spec:
                 secretKeyRef:
                   name: tm-medals-api
                   key: DATABASE_CONNSTR
+            - name: DATABASE_SSL
+              value: "true"
             - name: ADMIN_KEY
               valueFrom:
                 secretKeyRef:
