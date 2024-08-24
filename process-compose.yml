@@ -16,9 +16,6 @@ processes:
       - "HOST=localhost"
       - "TMIO_URL=http://localhost:8100"
       - "DEBUG=true"
-  # app:
-  #   working_dir: app
-  #   command: yarn start
   db:
     working_dir: .
     command: docker compose up db

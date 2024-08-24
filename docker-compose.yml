@@ -18,15 +18,6 @@ services:
     depends_on:
       - db
       - tmiosim
-  # app:
-  #   build:
-  #     context: app
-  #   image: danonthemoon/tm-medals-app:latest
-  #   restart: unless-stopped
-  #   ports:
-  #     - 8080:80
-  #   networks:
-  #     - server-network
   ingress:
     image: nginx
     restart: unless-stopped

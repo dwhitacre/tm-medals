@@ -6,9 +6,9 @@ Software repository for Trackmania custom medals. For each part of the solution 
 
 ### Process Compose
 
-> Note the `app` runs on 8080 by default and so does process-compose. I've modified the process compose port to be 8999 via an environment variable `PC_PORT_NUM=8999`.
+> Note: I've modified the process compose port to be 8999 via an environment variable `PC_PORT_NUM=8999`.
 
-From the root you can kick off the `app`, `api`, `db`, `tmiosim`, `e2e` all in one go. This does not run the db migrations, you want to run those separately.
+From the root you can kick off the `api`, `db`, `tmiosim`, `e2e` all in one go. This does not run the db migrations, you want to run those separately.
 
 ```
 process-compose
@@ -16,7 +16,7 @@ process-compose
 
 ### Docker Compose
 
-From the root you can kick off the `app`, `api`, `db`, an `nginx` lb and `tmiosim` in one go. This does not tun the db migrations, you want to run those separately.
+From the root you can kick off the `api`, `db`, an `nginx` lb and `tmiosim` in one go. This does not tun the db migrations, you want to run those separately.
 
 ```
 docker compose up --build
@@ -34,41 +34,15 @@ If you have all that, and get the naming (or value overrides configured), you sh
 
 ## Architecture
 
-### App
-
-> Not currently implemented. Coming soon..
-
-The `/app` directory contains an angular application used to power the tm-medals.danonthemoon.dev website.
-This also contains a lightweight nginx docker image to host the bundle.
-
-- Running locally
-
-```
-yarn start
-```
-
-- Running the tests and lint
-
-```
-yarn test
-yarn lint
-yarn format
-```
-
 ### Api
 
-The `/api` directory contains a golang webserver to populate the data for the tm-medals.danonthemoon.dev website. This is runs as docker container as well as an simple executable.
+The `/api` directory contains a bun webserver to populate the data for the tm-medals.danonthemoon.dev website. This is runs as docker container as well as an simple executable.
 
 - Running locally
 
 ```
-go run .
-```
-
-- Running the tests
-
-```
-go test .
+bun install
+bun run watch
 ```
 
 ### Db

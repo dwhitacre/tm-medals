@@ -1,42 +1,14 @@
 name: CI
 on:
   push:
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
 
 jobs:
-  # app:
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: app
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #     - uses: actions/setup-node@v4
-  #       with:
-  #         node-version: "18.x"
-  #     - run: yarn
-  # - run: yarn lint
-  # - run: yarn test
-  api:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: api
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-go@v5
-        with:
-          go-version: "1.22"
-      - run: go mod download
-      - run: go test
   deploy:
     runs-on: ubuntu-latest
-    # needs: [app, api]
-    needs: [api]
     if: ${{ (github.head_ref || github.ref_name) == 'main' }}
     environment: tm-medals.danonthemoon.dev
     steps:
@@ -54,12 +26,6 @@ jobs:
           context: api
           push: true
           tags: danonthemoon/tm-medals-api:latest
-      # - name: Build and push
-      #   uses: docker/build-push-action@v5
-      #   with:
-      #     context: app
-      #     push: true
-      #     tags: danonthemoon/tm-medals-app:latest
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
