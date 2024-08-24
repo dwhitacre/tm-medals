@@ -35,7 +35,8 @@ jobs:
       - run: go test
   deploy:
     runs-on: ubuntu-latest
-    needs: [app, api]
+    # needs: [app, api]
+    needs: [api]
     if: ${{ (github.head_ref || github.ref_name) == 'main' }}
     environment: tm-medals.danonthemoon.dev
     steps:
