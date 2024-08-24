@@ -1,0 +1,30 @@
+version: "0.5"
+
+processes:
+  api:
+    working_dir: api
+    command: go run .
+    readiness_probe:
+      http_get:
+        host: 127.0.0.1
+        scheme: http
+        path: "/ready"
+        port: 8081
+    environment:
+      - "DATABASE_CONNSTR=postgres://tmmedals:Passw0rd!@localhost:5432/tmmedals?pool_max_conns=10"
+      - "ADMIN_KEY=developer-test-key"
+      - "HOST=localhost"
+      - "TM_URL=http://localhost:8100"
+  # app:
+  #   working_dir: app
+  #   command: yarn start
+  db:
+    working_dir: .
+    command: docker compose up db
+    shutdown:
+      command: docker compose stop db
+  tmsim:
+    working_dir: .
+    command: docker compose up tmsim
+    shutdown:
+      command: docker compose stop tmsim
