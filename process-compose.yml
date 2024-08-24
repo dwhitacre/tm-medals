@@ -14,7 +14,7 @@ processes:
       - "DATABASE_CONNSTR=postgres://tmmedals:Passw0rd!@localhost:5432/tmmedals?pool_max_conns=10"
       - "ADMIN_KEY=developer-test-key"
       - "HOST=localhost"
-      - "TM_URL=http://localhost:8100"
+      - "TMIO_URL=http://localhost:8100"
   # app:
   #   working_dir: app
   #   command: yarn start
@@ -23,8 +23,8 @@ processes:
     command: docker compose up db
     shutdown:
       command: docker compose stop db
-  tmsim:
+  tmiosim:
     working_dir: .
-    command: docker compose up tmsim
+    command: docker compose up tmiosim
     shutdown:
-      command: docker compose stop tmsim
+      command: docker compose stop tmiosim

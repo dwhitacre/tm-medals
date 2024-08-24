@@ -1,7 +1,7 @@
 {
   "uuid": "49e0f346-6f58-4c1c-818b-fddcbd78e9ae",
   "lastMigration": 32,
-  "name": "TM Sim",
+  "name": "TMIO Sim",
   "endpointPrefix": "",
   "latency": 0,
   "port": 8100,

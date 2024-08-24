@@ -43,8 +43,8 @@ spec:
                 secretKeyRef:
                   name: tm-medals-api
                   key: ADMIN_KEY
-            - name: TM_URL
-              value: {{ .Values.tmUrl }}
+            - name: TMIO_URL
+              value: {{ .Values.tmioUrl }}
           ports:
             - name: api-http
               containerPort: 8081
