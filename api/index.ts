@@ -12,6 +12,12 @@ const server = Bun.serve({
   },
 });
 
+process.on("SIGINT", async () => {
+  services.logger.warn("Shutting down");
+  await services.db.close();
+  services.logger.info("Successful shutdown");
+});
+
 services.logger.info("Server started", {
   hostname: server.hostname,
   port: server.port,

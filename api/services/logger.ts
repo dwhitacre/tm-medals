@@ -35,7 +35,14 @@ export class Logger {
   }
 
   error(message: string, err: Error, properties?: LogProperties) {
-    console.error(this.getMessage(message, { ...properties, error: err }));
+    console.warn(
+      this.getMessage(message, {
+        ...properties,
+        errorMessage: err.message,
+        errorStack: err.stack,
+        error: err.name ?? err,
+      })
+    );
   }
 
   set(properties: LogProperties) {

@@ -1,5 +1,6 @@
-import type { Logger } from "./logger";
+import db from "./db";
 import logger from "./logger";
 
-export type Services = { logger: Logger };
-export default { logger } as Services;
+const services = { logger, db };
+export type Services = typeof services;
+export default services;
