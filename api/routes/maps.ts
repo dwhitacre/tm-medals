@@ -1,20 +1,15 @@
 import Route from "./route";
 import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
+import Map from "../domain/map";
 
 class Maps extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
-    if (req.raw.method.toLowerCase() !== "post")
-      return ApiResponse.badRequest(req);
+    if (!req.checkMethod("post")) return ApiResponse.badRequest(req);
+    if (!req.checkPermission("admin")) return ApiResponse.unauthorized(req);
 
-    if (!req.permissions.admin) return ApiResponse.unauthorized(req);
-
-    const json = await req.raw.json();
-    const map = req.services.maps.fromJson(json);
-    if (!map) {
-      req.logger.warn("Failed to parse map", { map, json });
-      return ApiResponse.badRequest(req);
-    }
+    const map = await req.parse(Map);
+    if (!map) return ApiResponse.badRequest(req);
 
     await req.services.maps.upsert(map);
     return ApiResponse.ok(req);

@@ -1,15 +1,31 @@
 import Route from "./route";
 import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
+import MedalTime from "../domain/medaltime";
 
 class MedalTimes extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
-    if (!req.url.searchParams.has("accountId"))
-      return ApiResponse.badRequest(req);
+    if (!req.checkMethod(["get", "post"])) return ApiResponse.badRequest(req);
+    if (req.method === "get") return this.handleGet(req);
+    return this.handlePost(req);
+  }
 
-    const accountId = `${req.url.searchParams.get("accountId")}`;
-    const medaltimes = await req.services.medaltimes.allByPlayer(accountId);
-    return ApiResponse.ok(req, { medaltimes, accountId });
+  async handleGet(req: ApiRequest): Promise<ApiResponse> {
+    const accountId = req.getQueryParam("accountId");
+    if (!accountId) return ApiResponse.badRequest(req);
+
+    const medalTime = await req.services.medaltimes.get(accountId);
+    return ApiResponse.ok(req, { medalTime, accountId });
+  }
+
+  async handlePost(req: ApiRequest): Promise<ApiResponse> {
+    if (!req.checkPermission("admin")) return ApiResponse.unauthorized(req);
+
+    const medalTime = await req.parse(MedalTime);
+    if (!medalTime) return ApiResponse.badRequest(req);
+
+    await req.services.medaltimes.upsert(medalTime);
+    return ApiResponse.ok(req);
   }
 }
 

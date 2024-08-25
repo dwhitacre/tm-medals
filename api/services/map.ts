@@ -1,13 +1,5 @@
 import type { Db } from "./db";
-
-export type Map = {
-  mapUid: string;
-  authorTime: number;
-  name: string;
-  campaign?: string;
-  campaingIndex?: number;
-  dateModified?: Date;
-};
+import type { Map } from "../domain/map";
 
 export class Maps {
   db: Db;
@@ -16,51 +8,24 @@ export class Maps {
     this.db = db;
   }
 
-  fromJson(json: Awaited<ReturnType<Request["json"]>>): Map | undefined {
-    if (!json?.mapUid) return undefined;
-    if (!json.authorTime) return undefined;
-    if (!json.name) return undefined;
-
-    const map: Map = {
-      mapUid: json.mapUid,
-      authorTime: json.authorTime,
-      name: json.name,
-      campaign: json.campaign ?? "",
-      campaingIndex: json.campaingIndex ?? -1,
-    };
-    return map;
-  }
-
   async insert(map: Map) {
     return this.db.pool.query(
       `
-        insert into Map (MapUid, AuthorTime, Name, Campaign, CampaignIndex)
+        insert into Maps (MapUid, AuthorTime, Name, Campaign, CampaignIndex)
         values ($1, $2, $3, $4, $5)
       `,
-      [
-        map.mapUid,
-        map.authorTime,
-        map.name,
-        map.campaign ?? "",
-        map.campaingIndex ?? -1,
-      ]
+      [map.mapUid, map.authorTime, map.name, map.campaign, map.campaignIndex]
     );
   }
 
   async update(map: Map) {
     return this.db.pool.query(
       `
-        update Map
+        update Maps
         set AuthorTime=$2, Name=$3, Campaign=$4, CampaignIndex=$5
         where MapUid=$1
       `,
-      [
-        map.mapUid,
-        map.authorTime,
-        map.name,
-        map.campaign ?? "",
-        map.campaingIndex ?? -1,
-      ]
+      [map.mapUid, map.authorTime, map.name, map.campaign, map.campaignIndex]
     );
   }
 
@@ -68,7 +33,8 @@ export class Maps {
     try {
       await this.insert(map);
     } catch (error) {
-      await this.update(map);
+      const result = await this.update(map);
+      if (result.rowCount == null || result.rowCount < 1) throw error;
     }
     return map;
   }

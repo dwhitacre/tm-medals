@@ -36,10 +36,14 @@ export class ApiResponse {
   static newResponse(
     message: string,
     status: number,
-    props: ApiProperties = {}
+    properties: ApiProperties = {}
   ) {
-    return new Response(JSON.stringify({ message, status, ...props }), {
+    const headers = new Headers();
+    headers.set("Content-Type", "application/json");
+
+    return new Response(JSON.stringify({ message, status, ...properties }), {
       status,
+      headers,
     });
   }
 
@@ -49,6 +53,17 @@ export class ApiResponse {
 
   static unauthorized(req: ApiRequest) {
     return new this(this.newResponse("Unauthorized", 401), req);
+  }
+
+  static notFound(req: ApiRequest) {
+    return new this(this.newResponse("Not Found", 404), req);
+  }
+
+  static serverError(req: ApiRequest) {
+    return new this(
+      this.newResponse("Something unexpected occurred", 500),
+      req
+    );
   }
 
   static ok(req: ApiRequest, properties?: ApiProperties) {

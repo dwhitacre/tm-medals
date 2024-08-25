@@ -1,15 +1,6 @@
 import type { Db } from "./db";
-import type { Map } from "./map";
-import type { Player } from "./players";
-
-export type MedalTime = {
-  id: string;
-  medalTime: number;
-  customMedalTime?: number;
-  reason?: string;
-  dateModified?: Date;
-} & Map &
-  Player;
+import type { Player } from "../domain/player";
+import MedalTime from "../domain/medaltime";
 
 export class MedalTimes {
   db: Db;
@@ -18,7 +9,25 @@ export class MedalTimes {
     this.db = db;
   }
 
-  async allByPlayer(accountId: Player["accountId"]) {
+  async get(accountId: Player["accountId"]): Promise<MedalTime | undefined> {
+    const result = await this.db.pool.query(
+      `
+        select * from MedalTimes
+        join Players on Players.AccountId = MedalTimes.AccountId
+        join Maps on Maps.MapUid = MedalTimes.MapUid
+        where MedalTimes.AccountId = $1
+      `,
+      [accountId]
+    );
+    if (result.rowCount == null || result.rowCount < 1) return undefined;
+    if (result.rowCount > 1)
+      throw Error(
+        `Found MedalTimes when expected only one for accountId: ${accountId}`
+      );
+    return MedalTime.fromJson(result.rows[0]);
+  }
+
+  async getAll(accountId: Player["accountId"]) {
     const result = await this.db.pool.query(
       `
         select * from MedalTimes
@@ -29,7 +38,49 @@ export class MedalTimes {
       `,
       [accountId]
     );
-    return result.rows.map((row) => console.log);
+    return result.rows.map(MedalTime.fromJson);
+  }
+
+  async insert(medalTime: MedalTime) {
+    return this.db.pool.query(
+      `
+        insert into MedalTimes (MapUid, MedalTime, CustomMedalTime, Reason, AccountId)
+        values ($1, $2, $3, $4, $5)
+      `,
+      [
+        medalTime.mapUid,
+        medalTime.medalTime,
+        medalTime.customMedalTime,
+        medalTime.reason,
+        medalTime.accountId,
+      ]
+    );
+  }
+
+  async update(medalTime: MedalTime) {
+    return this.db.pool.query(
+      `
+        update MedalTimes
+        set MedalTime=$2, CustomMedalTime=$3, Reason=$4
+        where AccountId=$1
+      `,
+      [
+        medalTime.accountId,
+        medalTime.medalTime,
+        medalTime.customMedalTime,
+        medalTime.reason,
+      ]
+    );
+  }
+
+  async upsert(medalTime: MedalTime): Promise<MedalTime> {
+    try {
+      await this.insert(medalTime);
+    } catch (error) {
+      const result = await this.update(medalTime);
+      if (result.rowCount == null || result.rowCount < 1) throw error;
+    }
+    return medalTime;
   }
 }
 

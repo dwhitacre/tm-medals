@@ -1,10 +1,5 @@
 import type { Db } from "./db";
-
-export type Player = {
-  accountId: string;
-  name: string;
-  dateModified?: Date;
-};
+import type { Player } from "../domain/player";
 
 export class Players {
   db: Db;
@@ -13,21 +8,10 @@ export class Players {
     this.db = db;
   }
 
-  fromJson(json: Awaited<ReturnType<Request["json"]>>): Player | undefined {
-    if (!json?.accountId) return undefined;
-    if (!json.name) return undefined;
-
-    const player: Player = {
-      accountId: json.accountId,
-      name: json.name,
-    };
-    return player;
-  }
-
   async insert(player: Player) {
     return this.db.pool.query(
       `
-        insert into Player (AccountId, Name)
+        insert into Players (AccountId, Name)
         values ($1, $2)
       `,
       [player.accountId, player.name]
@@ -37,7 +21,7 @@ export class Players {
   async update(player: Player) {
     return this.db.pool.query(
       `
-        update Player
+        update Players
         set Name=$2
         where AccountId=$1
       `,
@@ -49,7 +33,8 @@ export class Players {
     try {
       await this.insert(player);
     } catch (error) {
-      await this.update(player);
+      const result = await this.update(player);
+      if (result.rowCount == null || result.rowCount < 1) throw error;
     }
     return player;
   }
