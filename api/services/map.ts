@@ -31,7 +31,7 @@ export class Maps {
     return map;
   }
 
-  async insertMap(map: Map) {
+  async insert(map: Map) {
     return this.db.pool.query(
       `
         insert into Map (MapUid, AuthorTime, Name, Campaign, CampaignIndex)
@@ -47,7 +47,7 @@ export class Maps {
     );
   }
 
-  async updateMap(map: Map) {
+  async update(map: Map) {
     return this.db.pool.query(
       `
         update Map
@@ -64,11 +64,11 @@ export class Maps {
     );
   }
 
-  async upsertMap(map: Map): Promise<Map> {
+  async upsert(map: Map): Promise<Map> {
     try {
-      await this.insertMap(map);
+      await this.insert(map);
     } catch (error) {
-      await this.updateMap(map);
+      await this.update(map);
     }
     return map;
   }

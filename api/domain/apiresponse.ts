@@ -2,6 +2,9 @@ import type { Services } from "../services";
 import type ApiRequest from "./apirequest";
 
 type Cache = {};
+export type ApiProperties = {
+  [_: string]: unknown;
+};
 
 export class ApiResponse {
   raw: Response;
@@ -30,16 +33,26 @@ export class ApiResponse {
     return this.raw;
   }
 
+  static newResponse(
+    message: string,
+    status: number,
+    props: ApiProperties = {}
+  ) {
+    return new Response(JSON.stringify({ message, status, ...props }), {
+      status,
+    });
+  }
+
   static badRequest(req: ApiRequest) {
-    return new this(new Response("Bad Request", { status: 400 }), req);
+    return new this(this.newResponse("Bad Request", 400), req);
   }
 
   static unauthorized(req: ApiRequest) {
-    return new this(new Response("Unauthorized", { status: 401 }), req);
+    return new this(this.newResponse("Unauthorized", 401), req);
   }
 
-  static ok(req: ApiRequest) {
-    return new this(new Response("OK", { status: 200 }), req);
+  static ok(req: ApiRequest, properties?: ApiProperties) {
+    return new this(this.newResponse("Ok", 200, properties), req);
   }
 }
 
