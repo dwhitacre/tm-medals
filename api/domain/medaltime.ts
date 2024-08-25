@@ -1,5 +1,5 @@
 import Map from "./map";
-import type Player from "./player";
+import Player from "./player";
 import Json from "./json";
 
 export class MedalTime {
@@ -26,6 +26,18 @@ export class MedalTime {
     if (json.datemodified) medalTimes.dateModified = json.datemodified;
 
     return medalTimes;
+  }
+
+  hydrateMap(json: { [_: string]: any }) {
+    json = Object.assign(json, Json.onlyPrefixedKeys(json, "maps"));
+    this.map = Map.fromJson(json);
+    return this;
+  }
+
+  hydratePlayer(json: { [_: string]: any }) {
+    json = Object.assign(json, Json.onlyPrefixedKeys(json, "players"));
+    this.player = Player.fromJson(json);
+    return this;
   }
 
   constructor(

@@ -12,7 +12,7 @@ export class MedalTimes {
   async get(accountId: Player["accountId"]): Promise<MedalTime | undefined> {
     const result = await this.db.pool.query(
       `
-        select * from MedalTimes
+        select MedalTimes.*, Players.Name as Players_Name, Players.DateModified as Players_DateModified, Maps.AuthorTime, Maps.Name as Maps_Name, Maps.DateModified as Maps_DateModified from MedalTimes
         join Players on Players.AccountId = MedalTimes.AccountId
         join Maps on Maps.MapUid = MedalTimes.MapUid
         where MedalTimes.AccountId = $1
@@ -24,7 +24,9 @@ export class MedalTimes {
       throw Error(
         `Found MedalTimes when expected only one for accountId: ${accountId}`
       );
-    return MedalTime.fromJson(result.rows[0]);
+
+    const json = result.rows[0];
+    return MedalTime.fromJson(json).hydrateMap(json).hydratePlayer(json);
   }
 
   async getAll(accountId: Player["accountId"]) {
