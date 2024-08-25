@@ -29,6 +29,18 @@ export class ApiResponse {
     this.logger.info("Request finished.");
     return this.raw;
   }
+
+  static badRequest(req: ApiRequest) {
+    return new this(new Response("Bad Request", { status: 400 }), req);
+  }
+
+  static unauthorized(req: ApiRequest) {
+    return new this(new Response("Unauthorized", { status: 401 }), req);
+  }
+
+  static ok(req: ApiRequest) {
+    return new this(new Response("OK", { status: 200 }), req);
+  }
 }
 
 export default ApiResponse;
