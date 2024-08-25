@@ -7,10 +7,9 @@ class MedalTimes extends Route {
     if (!req.url.searchParams.has("accountId"))
       return ApiResponse.badRequest(req);
 
-    const medaltimes = await req.services.medaltimes.allByPlayer(
-      `${req.url.searchParams.get("accountId")}`
-    );
-    return ApiResponse.ok(req, { medaltimes });
+    const accountId = `${req.url.searchParams.get("accountId")}`;
+    const medaltimes = await req.services.medaltimes.allByPlayer(accountId);
+    return ApiResponse.ok(req, { medaltimes, accountId });
   }
 }
 
