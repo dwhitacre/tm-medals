@@ -3,6 +3,7 @@
 
 bool         getting        = false;
 dictionary@  missing        = dictionary();
+bool submitting = false;
 
 void GetAllMapInfosAsync() {
     startnew(TryGetCampaignIndicesAsync);
@@ -150,4 +151,92 @@ void TryGetCampaignIndicesAsync() {
     }
 
     SortCampaigns();
+}
+
+void SubmitMapPB() {
+    submitting = true;
+
+    const uint64 start = Time::Now;
+    trace("submitting map pb");
+
+    CTrackMania@ App = cast<CTrackMania@>(GetApp());
+
+    if (App.RootMap is null) {
+        error("submitting map pb failed after " + (Time::Now - start) + "ms: no map found");
+        submitting = false;
+        return;
+    }
+
+    if (false
+        || App.MenuManager is null
+        || App.MenuManager.MenuCustom_CurrentManiaApp is null
+        || App.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr is null
+        || App.UserManagerScript is null
+        || App.UserManagerScript.Users.Length == 0
+        || App.UserManagerScript.Users[0] is null
+    ) {
+        error("submitting map pb failed after " + (Time::Now - start) + "ms: no pb found");
+        submitting = false;
+        return;
+    }
+
+    const string uid = App.RootMap.EdChallengeId;
+    const string mapName = App.RootMap.MapName;
+    const uint author = App.RootMap.TMObjective_AuthorTime;
+    const string accountId = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.WebServicesUserId;
+    const string displayName = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.Name;
+    const uint pb = App.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.Map_GetRecord_v2(App.UserManagerScript.Users[0].Id, uid, "PersonalBest", "", "TimeAttack", "");
+
+    Json::Value mapData = Json::Object();
+    mapData["mapUid"] = uid;
+    mapData["authorTime"] = author;
+    mapData["name"] = mapName;
+
+    Net::HttpRequest@ req = Net::HttpPost(S_ApiUrl + "/maps?api-key=" + S_ApiKey, Json::Write(mapData), "application/json");
+    while (!req.Finished())
+        yield();
+
+    int respCode = req.ResponseCode();
+    if (respCode != 200) {
+        error("submitting map pb failed on map upsert after " + (Time::Now - start) + "ms: code: " + respCode + " | msg: " + req.String().Replace("\n", " "));
+        submitting = false;
+        return;
+    }
+
+    Json::Value playerData = Json::Object();
+    playerData["accountId"] = accountId;
+    playerData["name"] = displayName;
+
+    Net::HttpRequest@ req3 = Net::HttpPost(S_ApiUrl + "/players?api-key=" + S_ApiKey, Json::Write(playerData), "application/json");
+    while (!req3.Finished())
+        yield();
+
+    respCode = req3.ResponseCode();
+    if (respCode != 200) {
+        error("submitting map pb failed on player upsert after " + (Time::Now - start) + "ms: code: " + respCode + " | msg: " + req3.String().Replace("\n", " "));
+        submitting = false;
+        return;
+    }
+
+    Json::Value medalTimeData = Json::Object();
+    medalTimeData["mapUid"] = uid;
+    medalTimeData["medalTime"] = pb;
+    medalTimeData["accountId"] = accountId;
+
+    Net::HttpRequest@ req2 = Net::HttpPost(S_ApiUrl + "/medaltimes?api-key=" + S_ApiKey, Json::Write(medalTimeData), "application/json");
+    while (!req2.Finished())
+        yield();
+
+    respCode = req2.ResponseCode();
+    if (respCode != 200) {
+        error("submitting map pb failed on medaltime upsert after " + (Time::Now - start) + "ms: code: " + respCode + " | msg: " + req2.String().Replace("\n", " "));
+        submitting = false;
+        return;
+    }
+
+    trace("submitting map pb done after " + (Time::Now - start) + "ms");
+    submitting = false;
+
+    trace("reloading map infos");
+    startnew(GetAllMapInfosAsync);
 }

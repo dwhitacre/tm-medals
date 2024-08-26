@@ -58,13 +58,14 @@ export class MedalTimes {
       `
         update MedalTimes
         set MedalTime=$2, CustomMedalTime=$3, Reason=$4
-        where AccountId=$1
+        where AccountId=$1 and MapUid=$5
       `,
       [
         medalTime.accountId,
         medalTime.medalTime,
         medalTime.customMedalTime,
         medalTime.reason,
+        medalTime.mapUid,
       ]
     );
   }

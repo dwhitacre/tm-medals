@@ -39,7 +39,10 @@ export class ApiRequest {
     const permissions: Array<ApiPermissions> = ["read"];
     if (
       process.env.ADMIN_KEY &&
-      this.raw.headers.get("x-api-key") === process.env.ADMIN_KEY
+      [
+        this.raw.headers.get("x-api-key"),
+        this.getQueryParam("api-key"),
+      ].includes(process.env.ADMIN_KEY)
     )
       permissions.push("admin");
 

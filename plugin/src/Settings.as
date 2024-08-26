@@ -32,6 +32,7 @@
 [Setting hidden] string S_ApiKey                 = "";
 [Setting hidden] string S_PlayerAccountId        = "c7818ba0-5e85-408e-a852-f658e8b90eec";
 [Setting hidden] string S_PlayerName             = "Dummy";
+[Setting hidden] string S_PlayerColor            = "3F3";
 
 [SettingsTab name="General" icon="Cogs"]
 void Settings_General() {
@@ -122,12 +123,17 @@ void Settings_General() {
         plugin.GetSetting("S_ApiKey").Reset();
         plugin.GetSetting("S_PlayerAccountId").Reset();
         plugin.GetSetting("S_PlayerName").Reset();
+        plugin.GetSetting("S_PlayerColor").Reset();
     }
 
     S_ApiUrl = UI::InputText("API Url", S_ApiUrl);
     S_ApiKey = UI::InputText("API Key", S_ApiKey);
     S_PlayerAccountId = UI::InputText("Player Account Id", S_PlayerAccountId);
     S_PlayerName = UI::InputText("Player Name", S_PlayerName);
+    S_PlayerColor = UI::InputText("Player Color", S_PlayerColor);
+
+    if (!title.Contains(S_PlayerColor) || !title.Contains(S_PlayerName))
+        OnSettingsChanged();
 }
 
 [SettingsTab name="UI Medals" icon="ListAlt" order=1]

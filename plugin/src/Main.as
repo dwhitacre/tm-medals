@@ -7,7 +7,7 @@ Campaign@     activeTotdMonth;
 Json::Value@  campaignIndices;
 dictionary@   campaigns         = dictionary();
 Campaign@[]   campaignsArr;
-const string  colorStr          = "\\$3F3";
+string        colorStr          = "\\$" + S_PlayerColor;
 const vec3    colorVec          = vec3(0.2f, 0.8f, 1.0f);
 UI::Font@     fontHeader;
 UI::Font@     fontSubHeader;
@@ -20,7 +20,7 @@ dictionary@   maps              = dictionary();
 const float   scale             = UI::GetScale();
 vec3[]        seasonColors;
 bool          settingTotals     = false;
-const string  title             = colorStr + Icons::Circle + "\\$G " + S_PlayerName + " Medals";
+string        title             = colorStr + Icons::Circle + "\\$G " + S_PlayerName + " Medals";
 uint          total             = 0;
 uint          totalHave         = 0;
 
@@ -66,6 +66,15 @@ void OnSettingsChanged() {
         S_ColorSummer,
         S_ColorFall
     };
+    
+    colorStr = "\\$" + S_PlayerColor;
+    title = colorStr + Icons::Circle + "\\$G " + S_PlayerName + " Medals";
+    
+    // @icon32 = null;
+    // @icon512 = null;
+
+    // IO::FileSource file("src/assets/players/" + S_PlayerAccountId + "_512.png");
+    // @iconUI = nvg::LoadTexture(file.Read(file.Size()));
 }
 
 void Render() {
