@@ -123,7 +123,7 @@ namespace PlayerMedals {
             author      = uint(map["map"]["authorTime"]);
             name        = string(map["map"]["name"]).Trim();
             uid         = string(map["mapUid"]);
-            medaltime     = uint(  map["medalTime"]);
+            medaltime     = uint(map["medalTime"]);
 
             campaignType = CampaignType::Seasonal;
 
@@ -141,7 +141,7 @@ namespace PlayerMedals {
 
             Json::Value@ custom = map["customMedalTime"];
             if (CheckJsonType(custom, Json::Type::Number, "customMedalTime", false))
-                this.custom = uint(custom);
+                this.custom = uint(custom < 0 ? 0 : custom);
 
             if (map["map"].HasKey("totdDate")) {
                 campaignType = CampaignType::TrackOfTheDay;
