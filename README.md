@@ -8,7 +8,7 @@ Software repository for Trackmania custom medals. For each part of the solution 
 
 > Note: I've modified the process compose port to be 8999 via an environment variable `PC_PORT_NUM=8999`.
 
-From the root you can kick off the `api`, `db`, `tmiosim`, `e2e` all in one go. This does not run the db migrations, you want to run those separately.
+From the root you can kick off the `api`, `db`, `e2e` all in one go. This does not run the db migrations, you want to run those separately.
 
 ```
 process-compose
@@ -16,7 +16,7 @@ process-compose
 
 ### Docker Compose
 
-From the root you can kick off the `api`, `db`, an `nginx` lb and `tmiosim` in one go. This does not tun the db migrations, you want to run those separately.
+From the root you can kick off the `api`, `db`, and an `nginx` lb in one go. This does not tun the db migrations, you want to run those separately.
 
 ```
 docker compose up --build
@@ -73,7 +73,3 @@ tern migrate -d -1
 The nginx loadbalancer, aka ingress, is simply the public nginx docker image configured with the nginx conf in `ingresssim/nginx.conf`. This is used in the docker compose step to properly emulate how the app and api will behave in a more k8s like environment where the services are behind an ingress-nginx deployment.
 
 This only really should be run directly when composing all the services together via docker compose.
-
-### TmioSim
-
-This is a simulator of trackmania io's APIs using mockoon. If you want to make changes to this you will likely want to download the mockoon GUI, though direct changes to the json are technically supported as well. This is used in all local environments by default to avoid hitting tm's api unecessarily for development and testing purposes.

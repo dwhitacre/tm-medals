@@ -9,7 +9,6 @@ services:
     environment:
       DATABASE_CONNSTR: postgres://tmmedals:Passw0rd!@db:5432/tmmedals?pool_max_conns=10
       ADMIN_KEY: developer-test-key
-      TMIO_URL: http://tmiosim:8100
       HOST: 0.0.0.0
     ports:
       - 8081:8081
@@ -17,7 +16,6 @@ services:
       - server-network
     depends_on:
       - db
-      - tmiosim
   ingress:
     image: nginx
     restart: unless-stopped
@@ -40,16 +38,6 @@ services:
       - server-network
     ports:
       - 5432:5432
-  tmiosim:
-    image: mockoon/cli:8.1.1
-    command: ["-d", "/data/mockoon.json", "-p", "8100"]
-    restart: unless-stopped
-    networks:
-      - server-network
-    ports:
-      - 8100:8100
-    volumes:
-      - ./tmiosim/:/data:ro
 
 networks:
   server-network:

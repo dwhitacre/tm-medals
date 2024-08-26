@@ -4,25 +4,19 @@ processes:
   api:
     working_dir: api
     command: bun run watch
-    readiness_probe:
-      http_get:
-        host: localhost
-        scheme: http
-        path: "/ready"
-        port: 8081
+    # readiness_probe:
+    #   http_get:
+    #     host: localhost
+    #     scheme: http
+    #     path: "/ready"
+    #     port: 8081
     environment:
       - "DATABASE_CONNSTR=postgres://tmmedals:Passw0rd!@localhost:5432/tmmedals?pool_max_conns=10"
       - "ADMIN_KEY=developer-test-key"
       - "HOST=localhost"
-      - "TMIO_URL=http://localhost:8100"
       - "DEBUG=true"
   db:
     working_dir: .
     command: docker compose up db
     shutdown:
       command: docker compose stop db
-  tmiosim:
-    working_dir: .
-    command: docker compose up tmiosim
-    shutdown:
-      command: docker compose stop tmiosim

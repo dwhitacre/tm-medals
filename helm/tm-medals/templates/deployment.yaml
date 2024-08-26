@@ -45,8 +45,6 @@ spec:
                 secretKeyRef:
                   name: tm-medals-api
                   key: ADMIN_KEY
-            - name: TMIO_URL
-              value: {{ .Values.tmioUrl }}
             - name: HOST
               value: "0.0.0.0"
           ports:
