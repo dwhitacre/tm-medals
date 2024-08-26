@@ -1,5 +1,6 @@
 import type { Db } from "./db";
 import type { Player } from "../domain/player";
+import type { Map } from "../domain/map";
 import MedalTime from "../domain/medaltime";
 
 export class MedalTimes {
@@ -9,38 +10,31 @@ export class MedalTimes {
     this.db = db;
   }
 
-  async get(accountId: Player["accountId"]): Promise<MedalTime | undefined> {
+  async get(
+    accountId: Player["accountId"],
+    mapUid: Map["mapUid"] | undefined
+  ): Promise<Array<MedalTime>> {
+    const params = mapUid ? [accountId, mapUid] : [accountId];
     const result = await this.db.pool.query(
       `
         select MedalTimes.*, Players.Name as Players_Name, Players.DateModified as Players_DateModified, Maps.AuthorTime, Maps.Name as Maps_Name, Maps.DateModified as Maps_DateModified from MedalTimes
         join Players on Players.AccountId = MedalTimes.AccountId
         join Maps on Maps.MapUid = MedalTimes.MapUid
-        where MedalTimes.AccountId = $1
+        where MedalTimes.AccountId = $1 ${
+          mapUid ? "and MedalTimes.MapUid = $2" : ""
+        }
       `,
-      [accountId]
+      params
     );
-    if (result.rowCount == null || result.rowCount < 1) return undefined;
-    if (result.rowCount > 1)
+    if (result.rowCount == null || result.rowCount < 1) return [];
+    if (mapUid && result.rowCount > 1)
       throw Error(
-        `Found MedalTimes when expected only one for accountId: ${accountId}`
+        `Found MedalTimes when expected only one for accountId: ${accountId} and mapUid: ${mapUid}`
       );
 
-    const json = result.rows[0];
-    return MedalTime.fromJson(json).hydrateMap(json).hydratePlayer(json);
-  }
-
-  async getAll(accountId: Player["accountId"]) {
-    const result = await this.db.pool.query(
-      `
-        select * from MedalTimes
-        join PlayerMedalTimes on PlayerMedalTimes.MedalTimesId = MedalTimes.Id
-        join Players on Players.AccountId = PlayerMedalTimes.AccountId
-        join Map on Map.MapUid = MedalTimes.MapUid
-        where PlayerMedalTimes.AccountId = $1
-      `,
-      [accountId]
+    return result.rows.map((json) =>
+      MedalTime.fromJson(json).hydrateMap(json).hydratePlayer(json)
     );
-    return result.rows.map(MedalTime.fromJson);
   }
 
   async insert(medalTime: MedalTime) {

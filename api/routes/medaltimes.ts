@@ -14,8 +14,10 @@ class MedalTimes extends Route {
     const accountId = req.getQueryParam("accountId");
     if (!accountId) return ApiResponse.badRequest(req);
 
-    const medalTime = await req.services.medaltimes.get(accountId);
-    return ApiResponse.ok(req, { medalTime, accountId });
+    const mapUid = req.getQueryParam("mapUid");
+    const medalTimes = await req.services.medaltimes.get(accountId, mapUid);
+
+    return ApiResponse.ok(req, { medalTimes, accountId, mapUid });
   }
 
   async handlePost(req: ApiRequest): Promise<ApiResponse> {
