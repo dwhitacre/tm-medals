@@ -6,6 +6,7 @@ export class Map {
   name: string;
   campaign?: string;
   campaignIndex?: number;
+  totdDate?: string;
   dateModified?: Date;
 
   static fromJson(json: { [_: string]: any }): Map {
@@ -18,6 +19,7 @@ export class Map {
     const map = new this(json.mapuid, json.authortime, json.name);
     if (json.campaign) map.campaign = json.campaign;
     if (json.campaignindex) map.campaignIndex = json.campaignindex;
+    if (json.totddate) map.totdDate = json.totddate;
     if (json.datemodified) map.dateModified = json.datemodified;
 
     return map;

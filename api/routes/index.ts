@@ -1,5 +1,6 @@
 import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
+import campaignIndices from "./campaign-indices";
 import maps from "./maps";
 import medaltimes from "./medaltimes";
 import players from "./players";
@@ -15,6 +16,8 @@ async function handle(req: ApiRequest): Promise<ApiResponse> {
       response = await players.handle(req);
     else if (req.url.pathname === "/medaltimes")
       response = await medaltimes.handle(req);
+    else if (req.url.pathname === "/campaign-indices")
+      response = await campaignIndices.handle(req);
     else response = await Route.defaultHandle(req);
   } catch (error) {
     req.error = error as Error;

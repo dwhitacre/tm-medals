@@ -20,3 +20,6 @@ processes:
     command: docker compose up db
     shutdown:
       command: docker compose stop db
+  plugin:
+    working_dir: plugin
+    command: bash .bin/build.sh -w
