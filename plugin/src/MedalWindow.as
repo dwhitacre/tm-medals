@@ -54,12 +54,16 @@ void MedalWindow() {
             
             UI::Separator();
 
+#if DEPENDENCY_MAPINFO
             UI::BeginDisabled(submitting);
             if (UI::Button(" Submit" + (submitting  ? "ing..." : "") + " PB")) {
                 trace("submitting...");
                 startnew(SubmitMapPB);
             }
             UI::EndDisabled();
+#else
+            UI::Text("Install Map Info to submit times.");
+#endif
         }
     }
     UI::End();

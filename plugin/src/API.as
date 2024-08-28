@@ -186,11 +186,21 @@ void SubmitMapPB() {
     const string accountId = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.WebServicesUserId;
     const string displayName = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.Name;
     const uint pb = App.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.Map_GetRecord_v2(App.UserManagerScript.Users[0].Id, uid, "PersonalBest", "", "TimeAttack", "");
+    auto currentMapInfo = MapInfo::GetCurrentMapInfo();
+
+    if (pb > 2147483647) {
+        error("submitting map pb failed after " + (Time::Now - start) + "ms: pb is not set or too large");
+        submitting = false;
+        return;
+    }
 
     Json::Value mapData = Json::Object();
     mapData["mapUid"] = uid;
     mapData["authorTime"] = author;
     mapData["name"] = mapName;
+    if (currentMapInfo.LoadedWasTOTD) {
+        mapData["totdDate"] = currentMapInfo.TOTDDate.Split(" ")[0];
+    }
 
     Net::HttpRequest@ req = Net::HttpPost(S_ApiUrl + "/maps?api-key=" + S_ApiKey, Json::Write(mapData), "application/json");
     while (!req.Finished())
