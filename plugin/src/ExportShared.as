@@ -69,6 +69,10 @@ namespace PlayerMedals {
         uint get_author() { return _author; }
         private void set_author(uint a) { _author = a; }
 
+        private bool _nadeo;
+        bool get_nadeo() { return _nadeo; }
+        private void set_nadeo(bool c) { _nadeo = c; }
+
         private string _campaign;
         string get_campaign() { return _campaign; }
         private void set_campaign(const string &in c) { _campaign = c; }
@@ -125,9 +129,27 @@ namespace PlayerMedals {
             uid         = string(map["mapUid"]);
             medaltime     = uint(map["medalTime"]);
 
-            campaignType = CampaignType::Seasonal;
+            campaignType = CampaignType::Unknown;
+            nadeo = false;
 
-            if (map["map"].HasKey("campaign")) {
+            Json::Value@ nadeo = map["map"]["nadeo"];
+            if (CheckJsonType(nadeo, Json::Type::Boolean, "nadeo", false)) 
+                this.nadeo = bool(nadeo);
+
+            Json::Value@ custom = map["customMedalTime"];
+            if (CheckJsonType(custom, Json::Type::Number, "customMedalTime", false))
+                this.custom = uint(custom < 0 ? 0 : custom);
+
+            Json::Value@ reason = map["reason"];
+            if (CheckJsonType(reason, Json::Type::String, "reason", false))
+                this.reason = reason;
+
+            if (this.nadeo) {
+                campaignType = CampaignType::Seasonal;
+
+                this.campaign = name.SubStr(0, name.Length - 5);
+                this.index = uint8(Text::ParseUInt(name.SubStr(name.Length - 2)) - 1);
+            } else if (map["map"].HasKey("campaign")) {
                 campaignType = CampaignType::Other;
 
                 Json::Value@ campaign = map["map"]["campaign"];
@@ -137,31 +159,19 @@ namespace PlayerMedals {
                 Json::Value@ index = map["map"]["campaignIndex"];
                 if (CheckJsonType(index, Json::Type::Number, "index", false))
                     this.index = uint8(index);
-            }
-
-            Json::Value@ custom = map["customMedalTime"];
-            if (CheckJsonType(custom, Json::Type::Number, "customMedalTime", false))
-                this.custom = uint(custom < 0 ? 0 : custom);
-
-            if (map["map"].HasKey("totdDate")) {
+            } else if (map["map"].HasKey("totdDate")) {
                 campaignType = CampaignType::TrackOfTheDay;
 
                 Json::Value@ date = map["map"]["totdDate"];
                 if (CheckJsonType(date, Json::Type::String, "totdDate", false)) {
                     this.date = string(date);
 
-                    campaign = MonthName(Text::ParseUInt(this.date.SubStr(5, 2))) + " " + this.date.SubStr(0, 4);
-                    index = uint8(Text::ParseUInt(this.date.SubStr(this.date.Length - 2)) - 1);
+                    this.campaign = MonthName(Text::ParseUInt(this.date.SubStr(5, 2))) + " " + this.date.SubStr(0, 4);
+                    this.index = uint8(Text::ParseUInt(this.date.SubStr(this.date.Length - 2)) - 1);
                 }
-            }
-
-            Json::Value@ reason = map["reason"];
-            if (CheckJsonType(reason, Json::Type::String, "reason", false))
-                this.reason = reason;
-
-            if (campaignType == CampaignType::Seasonal) {
-                campaign = name.SubStr(0, name.Length - 5);
-                index = uint8(Text::ParseUInt(name.SubStr(name.Length - 2)) - 1);
+            } else {
+                this.campaign = this.name.Trim().SubStr(0, 1).ToUpper();
+                this.index = Text::ParseUInt(campaign);
             }
         }
 

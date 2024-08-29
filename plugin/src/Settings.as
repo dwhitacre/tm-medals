@@ -33,6 +33,7 @@
 [Setting hidden] string S_PlayerAccountId        = "c7818ba0-5e85-408e-a852-f658e8b90eec";
 [Setting hidden] string S_PlayerName             = "Dummy";
 [Setting hidden] string S_PlayerColor            = "3F3";
+[Setting hidden] string S_NadeoAccountId         = "d2372a08-a8a1-46cb-97fb-23a161d85ad0";
 
 [SettingsTab name="General" icon="Cogs"]
 void Settings_General() {

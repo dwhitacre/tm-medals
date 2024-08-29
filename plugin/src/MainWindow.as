@@ -164,7 +164,25 @@ void Tab_Other() {
                 }
             }
 
-            // TODO: non-official campaigns if they are added
+            UI::PushFont(fontHeader);
+            UI::SeparatorText("Other");
+            UI::PopFont();
+
+            index = 0;
+
+            for (uint i = 0; i < campaignsArr.Length; i++) {
+                Campaign@ campaign = campaignsArr[i];
+                if (campaign is null || campaign.type != PlayerMedals::CampaignType::Unknown)
+                    continue;
+
+                if (index++ % 3 > 0)
+                    UI::SameLine();
+
+                if (UI::Button(campaign.name, vec2(scale * 120.0f, scale * 25.0f))) {
+                    @activeOtherCampaign = @campaign;
+                    selected = true;
+                }
+            }
 
             UI::EndTabItem();
         }

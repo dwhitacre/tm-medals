@@ -180,13 +180,14 @@ void SubmitMapPB() {
         return;
     }
 
+    auto currentMapInfo = MapInfo::GetCurrentMapInfo();
     const string uid = App.RootMap.EdChallengeId;
-    const string mapName = App.RootMap.MapName;
+    const string mapName = currentMapInfo.CleanName;
     const uint author = App.RootMap.TMObjective_AuthorTime;
     const string accountId = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.WebServicesUserId;
     const string displayName = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.Name;
     const uint pb = App.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.Map_GetRecord_v2(App.UserManagerScript.Users[0].Id, uid, "PersonalBest", "", "TimeAttack", "");
-    auto currentMapInfo = MapInfo::GetCurrentMapInfo();
+    const bool nadeo = currentMapInfo.AuthorAccountId == S_NadeoAccountId;
 
     if (pb > 2147483647) {
         error("submitting map pb failed after " + (Time::Now - start) + "ms: pb is not set or too large");
@@ -198,7 +199,8 @@ void SubmitMapPB() {
     mapData["mapUid"] = uid;
     mapData["authorTime"] = author;
     mapData["name"] = mapName;
-    if (currentMapInfo.LoadedWasTOTD) {
+    mapData["nadeo"] = nadeo;
+    if (currentMapInfo.LoadedWasTOTD && currentMapInfo.TOTDDate.Length > 0) {
         mapData["totdDate"] = currentMapInfo.TOTDDate.Split(" ")[0];
     }
 
