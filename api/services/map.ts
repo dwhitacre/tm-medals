@@ -11,8 +11,8 @@ export class Maps {
   async insert(map: Map) {
     return this.db.pool.query(
       `
-        insert into Maps (MapUid, AuthorTime, Name, Campaign, CampaignIndex, TotdDate)
-        values ($1, $2, $3, $4, $5, $6)
+        insert into Maps (MapUid, AuthorTime, Name, Campaign, CampaignIndex, TotdDate, Nadeo)
+        values ($1, $2, $3, $4, $5, $6, $7)
       `,
       [
         map.mapUid,
@@ -21,6 +21,7 @@ export class Maps {
         map.campaign,
         map.campaignIndex,
         map.totdDate,
+        map.nadeo,
       ]
     );
   }
@@ -29,7 +30,7 @@ export class Maps {
     return this.db.pool.query(
       `
         update Maps
-        set AuthorTime=$2, Name=$3, Campaign=$4, CampaignIndex=$5, TotdDate=$6
+        set AuthorTime=$2, Name=$3, Campaign=$4, CampaignIndex=$5, TotdDate=$6, Nadeo=$7
         where MapUid=$1
       `,
       [
@@ -39,6 +40,7 @@ export class Maps {
         map.campaign,
         map.campaignIndex,
         map.totdDate,
+        map.nadeo,
       ]
     );
   }

@@ -8,6 +8,7 @@ export class Map {
   campaignIndex?: number;
   totdDate?: string;
   dateModified?: Date;
+  nadeo = false;
 
   static fromJson(json: { [_: string]: any }): Map {
     json = Json.lowercaseKeys(json);
@@ -21,6 +22,7 @@ export class Map {
     if (json.campaignindex) map.campaignIndex = json.campaignindex;
     if (json.totddate) map.totdDate = json.totddate;
     if (json.datemodified) map.dateModified = json.datemodified;
+    if (json.nadeo) map.nadeo = json.nadeo;
 
     return map;
   }

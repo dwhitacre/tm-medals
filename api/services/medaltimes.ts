@@ -17,7 +17,7 @@ export class MedalTimes {
     const params = mapUid ? [accountId, mapUid] : [accountId];
     const result = await this.db.pool.query(
       `
-        select MedalTimes.*, Players.Name as Players_Name, Players.DateModified as Players_DateModified, Maps.AuthorTime, Maps.Name as Maps_Name, Maps.Campaign, Maps.CampaignIndex, Maps.TotdDate, Maps.DateModified as Maps_DateModified from MedalTimes
+        select MedalTimes.*, Players.Name as Players_Name, Players.DateModified as Players_DateModified, Maps.AuthorTime, Maps.Name as Maps_Name, Maps.Campaign, Maps.CampaignIndex, Maps.TotdDate, Maps.Nadeo, Maps.DateModified as Maps_DateModified from MedalTimes
         join Players on Players.AccountId = MedalTimes.AccountId
         join Maps on Maps.MapUid = MedalTimes.MapUid
         where MedalTimes.AccountId = $1 ${
