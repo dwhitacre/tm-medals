@@ -128,7 +128,7 @@ void Settings_General() {
     }
 
     S_ApiUrl = UI::InputText("API Url", S_ApiUrl);
-    S_ApiKey = UI::InputText("API Key", S_ApiKey);
+    S_ApiKey = UI::InputText("API Key", S_ApiKey, false, UI::InputTextFlags::Password);
     S_PlayerAccountId = UI::InputText("Player Account Id", S_PlayerAccountId);
     S_PlayerName = UI::InputText("Player Name", S_PlayerName);
     S_PlayerColor = UI::InputText("Player Color", S_PlayerColor);
