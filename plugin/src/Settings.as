@@ -209,15 +209,16 @@ void Settings_Debug() {
         UI::PushStyleColor(UI::Col::TableRowBgAlt, vec4(0.0f, 0.0f, 0.0f, 0.5f));
 
         UI::TableSetupScrollFreeze(0, 1);
-        UI::TableSetupColumn("uid",      UI::TableColumnFlags::WidthFixed, scale * 230.0f);
+        UI::TableSetupColumn("uid");
         UI::TableSetupColumn("name");
-        UI::TableSetupColumn("pm",       UI::TableColumnFlags::WidthFixed, scale * 60.0f);
-        UI::TableSetupColumn("at",       UI::TableColumnFlags::WidthFixed, scale * 60.0f);
-        UI::TableSetupColumn("pb",       UI::TableColumnFlags::WidthFixed, scale * 60.0f);
-        UI::TableSetupColumn("date",     UI::TableColumnFlags::WidthFixed, scale * 70.0f);
-        UI::TableSetupColumn("campaign", UI::TableColumnFlags::WidthFixed, scale * 100.0f);
-        UI::TableSetupColumn("index",    UI::TableColumnFlags::WidthFixed, scale * 40.0f);
-        UI::TableSetupColumn("custom",   UI::TableColumnFlags::WidthFixed, scale * 60.0f);
+        UI::TableSetupColumn("pm");
+        UI::TableSetupColumn("at");
+        UI::TableSetupColumn("pb");
+        UI::TableSetupColumn("date");
+        UI::TableSetupColumn("campaign");
+        UI::TableSetupColumn("index" );
+        UI::TableSetupColumn("nadeo");
+        UI::TableSetupColumn("custom");
         UI::TableSetupColumn("reason");
         UI::TableHeadersRow();
 
@@ -251,6 +252,9 @@ void Settings_Debug() {
 
                 UI::TableNextColumn();
                 UI::Text(tostring(map.index));
+
+                UI::TableNextColumn();
+                UI::Text(tostring(map.nadeo));
 
                 UI::TableNextColumn();
                 UI::Text(Time::Format(map.custom));
