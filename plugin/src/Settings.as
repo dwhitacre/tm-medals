@@ -117,6 +117,7 @@ void Settings_General() {
     UI::PushFont(fontHeader);
     UI::Text("Dev");
     UI::PopFont();
+    HoverTooltipSetting("Reload the plugin after changing these settings.");
 
     if (UI::Button("Reset to default##dev")) {
         Meta::Plugin@ plugin = Meta::ExecutingPlugin();
@@ -132,9 +133,6 @@ void Settings_General() {
     S_PlayerAccountId = UI::InputText("Player Account Id", S_PlayerAccountId);
     S_PlayerName = UI::InputText("Player Name", S_PlayerName);
     S_PlayerColor = UI::InputText("Player Color", S_PlayerColor);
-
-    if (!title.Contains(S_PlayerColor) || !title.Contains(S_PlayerName))
-        OnSettingsChanged();
 }
 
 [SettingsTab name="UI Medals" icon="ListAlt" order=1]
