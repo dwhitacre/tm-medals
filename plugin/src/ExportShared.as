@@ -149,16 +149,18 @@ namespace PlayerMedals {
 
                 this.campaign = name.SubStr(0, name.Length - 5);
                 this.index = uint8(Text::ParseUInt(name.SubStr(name.Length - 2)) - 1);
-            } else if (map["map"].HasKey("campaign")) {
-                campaignType = CampaignType::Other;
 
-                Json::Value@ campaign = map["map"]["campaign"];
-                if (CheckJsonType(campaign, Json::Type::String, "campaign", false))
-                    this.campaign = string(campaign);
+                if (map["map"].HasKey("campaign")) {
+                    campaignType = CampaignType::Other;
 
-                Json::Value@ index = map["map"]["campaignIndex"];
-                if (CheckJsonType(index, Json::Type::Number, "index", false))
-                    this.index = uint8(index);
+                    Json::Value@ campaign = map["map"]["campaign"];
+                    if (CheckJsonType(campaign, Json::Type::String, "campaign", false))
+                        this.campaign = string(campaign);
+
+                    Json::Value@ index = map["map"]["campaignIndex"];
+                    if (CheckJsonType(index, Json::Type::Number, "index", false))
+                        this.index = uint8(index);
+                }
             } else if (map["map"].HasKey("totdDate")) {
                 campaignType = CampaignType::TrackOfTheDay;
 

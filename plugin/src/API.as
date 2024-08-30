@@ -203,6 +203,10 @@ void SubmitMapPB() {
     if (currentMapInfo.LoadedWasTOTD && currentMapInfo.TOTDDate.Length > 0) {
         mapData["totdDate"] = currentMapInfo.TOTDDate.Split(" ")[0];
     }
+    if (mapName.ToLower().StartsWith("training -")) {
+        mapData["campaign"] = "Training";
+        mapData["campaignIndex"] = 0;
+    }
 
     Net::HttpRequest@ req = Net::HttpPost(S_ApiUrl + "/maps?api-key=" + S_ApiKey, Json::Write(mapData), "application/json");
     while (!req.Finished())
