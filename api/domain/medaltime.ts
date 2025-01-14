@@ -31,6 +31,7 @@ export class MedalTime {
   hydrateMap(json: { [_: string]: any }) {
     json = Object.assign(json, Json.onlyPrefixedKeys(json, "maps"));
     this.map = Map.fromJson(json);
+    if (!this.map.nadeo) this.map.nadeo = false;
     return this;
   }
 

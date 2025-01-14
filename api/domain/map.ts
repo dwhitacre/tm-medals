@@ -8,7 +8,7 @@ export class Map {
   campaignIndex?: number;
   totdDate?: string;
   dateModified?: Date;
-  nadeo = false;
+  nadeo?: boolean;
 
   static fromJson(json: { [_: string]: any }): Map {
     json = Json.lowercaseKeys(json);
@@ -31,6 +31,19 @@ export class Map {
     this.mapUid = mapUid;
     this.authorTime = authorTime;
     this.name = name;
+  }
+
+  toJson(): { [_: string]: any } {
+    return {
+      mapUid: this.mapUid,
+      authorTime: this.authorTime,
+      name: this.name,
+      campaign: this.campaign,
+      campaignIndex: this.campaignIndex,
+      totdDate: this.totdDate,
+      dateModified: this.dateModified,
+      nadeo: this.nadeo,
+    };
   }
 }
 

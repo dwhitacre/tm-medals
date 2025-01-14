@@ -6,7 +6,7 @@ import MedalTime from "../domain/medaltime";
 class MedalTimes extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
     if (!req.checkMethod(["get", "post"])) return ApiResponse.badRequest(req);
-    if (req.method === "get") return this.handleGet(req);
+    if (req.checkMethod("get")) return this.handleGet(req);
     return this.handlePost(req);
   }
 

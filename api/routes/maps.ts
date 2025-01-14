@@ -11,6 +11,14 @@ class Maps extends Route {
     const map = await req.parse(Map);
     if (!map) return ApiResponse.badRequest(req);
 
+    const existingMap = await req.services.maps.get(map);
+    if (existingMap) {
+      map.campaign = map.campaign ?? existingMap.campaign;
+      map.campaignIndex = map.campaignIndex ?? existingMap.campaignIndex;
+      map.totdDate = map.totdDate ?? existingMap.totdDate;
+      map.nadeo = map.nadeo ?? existingMap.nadeo;
+    }
+
     await req.services.maps.upsert(map);
     return ApiResponse.ok(req);
   }

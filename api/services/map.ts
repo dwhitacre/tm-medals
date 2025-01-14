@@ -1,11 +1,23 @@
 import type { Db } from "./db";
-import type { Map } from "../domain/map";
+import { Map } from "../domain/map";
 
 export class Maps {
   db: Db;
 
   constructor(db: Db) {
     this.db = db;
+  }
+
+  async get(map: Map) {
+    const response = await this.db.pool.query(
+      `
+        select * from Maps
+        where MapUid=$1
+      `,
+      [map.mapUid]
+    );
+    if (response && response.rowCount !== 1) return undefined;
+    return Map.fromJson(response.rows[0]);
   }
 
   async insert(map: Map) {
@@ -21,7 +33,7 @@ export class Maps {
         map.campaign,
         map.campaignIndex,
         map.totdDate,
-        map.nadeo,
+        map.nadeo ?? false,
       ]
     );
   }
@@ -40,7 +52,7 @@ export class Maps {
         map.campaign,
         map.campaignIndex,
         map.totdDate,
-        map.nadeo,
+        map.nadeo ?? false,
       ]
     );
   }
