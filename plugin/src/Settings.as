@@ -34,6 +34,9 @@
 [Setting hidden] string S_PlayerName             = "Dummy";
 [Setting hidden] string S_PlayerColor            = "3F3";
 [Setting hidden] string S_NadeoAccountId         = "d2372a08-a8a1-46cb-97fb-23a161d85ad0";
+[Setting hidden] string S_NadeoAltAccountId      = "aa02b90e-0652-4a1c-b705-4677e2983003";
+[Setting hidden] string S_NadeoTonaAccountId     = "7cd60a75-609a-4e64-b286-16f329878249";
+
 
 [SettingsTab name="General" icon="Cogs"]
 void Settings_General() {

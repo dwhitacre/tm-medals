@@ -187,7 +187,7 @@ void SubmitMapPB() {
     const string accountId = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.WebServicesUserId;
     const string displayName = App.MenuManager.MenuCustom_CurrentManiaApp.LocalUser.Name;
     const uint pb = App.MenuManager.MenuCustom_CurrentManiaApp.ScoreMgr.Map_GetRecord_v2(App.UserManagerScript.Users[0].Id, uid, "PersonalBest", "", "TimeAttack", "");
-    const bool nadeo = currentMapInfo.AuthorAccountId == S_NadeoAccountId;
+    const bool nadeo = currentMapInfo.AuthorAccountId == S_NadeoAccountId || currentMapInfo.AuthorAccountId == S_NadeoAltAccountId;
 
     if (pb > 2147483647) {
         error("submitting map pb failed after " + (Time::Now - start) + "ms: pb is not set or too large");
