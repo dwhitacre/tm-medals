@@ -1,8 +1,12 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
-import { playerCreate } from "./player.test";
-import { mapCreate } from "./map.test";
+import {
+  mapCreate,
+  medalTimesCreate,
+  medalTimesGet,
+  playerCreate,
+} from "./api";
 
 let pool: Pool;
 
@@ -16,36 +20,6 @@ beforeAll(() => {
 afterAll(async () => {
   await pool.end();
 });
-
-export const medalTimesGet = (accountId: string, mapUid: string) => {
-  return fetch(
-    `http://localhost:8081/medaltimes?accountId=${accountId}&mapUid=${mapUid}`
-  );
-};
-
-export const medalTimesCreate = ({
-  accountId = faker.string.uuid(),
-  mapUid = faker.string.uuid(),
-  medalTime = faker.number.int({ min: 1, max: 20000 }),
-  body,
-  method = "POST",
-  headers = {
-    "x-api-key": "developer-test-key",
-  },
-}: {
-  accountId?: string;
-  mapUid?: string;
-  medalTime?: number;
-  body?: any;
-  method?: string;
-  headers?: any;
-} = {}) => {
-  return fetch("http://localhost:8081/medaltimes", {
-    body: JSON.stringify(body ?? { accountId, mapUid, medalTime }),
-    method,
-    headers,
-  });
-};
 
 test("get medaltimes player dne and map dne", async () => {
   const response = await medalTimesGet("000", "001");

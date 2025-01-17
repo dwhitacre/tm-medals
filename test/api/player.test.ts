@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
+import { playerCreate, playerGet } from "./api";
 
 let pool: Pool;
 
@@ -15,40 +16,8 @@ afterAll(async () => {
   await pool.end();
 });
 
-export const playerGet = (accountId: string) => {
-  return pool.query(
-    `
-      select * from Players
-      where AccountId=$1
-    `,
-    [accountId]
-  );
-};
-
-export const playerCreate = ({
-  accountId = faker.string.uuid(),
-  name = faker.internet.username(),
-  body,
-  method = "POST",
-  headers = {
-    "x-api-key": "developer-test-key",
-  },
-}: {
-  accountId?: string;
-  name?: string;
-  body?: any;
-  method?: string;
-  headers?: any;
-} = {}) => {
-  return fetch("http://localhost:8081/players", {
-    body: JSON.stringify(body ?? { accountId, name }),
-    method,
-    headers,
-  });
-};
-
 test("get player dne", async () => {
-  const response = await playerGet("000");
+  const response = await playerGet(pool, "000");
   expect(response.rowCount).toEqual(0);
 });
 
@@ -95,7 +64,7 @@ test("create player", async () => {
 
   expect(response.status).toEqual(200);
 
-  const dbResponse = await playerGet(accountId);
+  const dbResponse = await playerGet(pool, accountId);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].accountid).toEqual(accountId);
@@ -120,7 +89,7 @@ test("create player repeat is an update", async () => {
 
   expect(response2.status).toEqual(200);
 
-  const dbResponse = await playerGet(accountId);
+  const dbResponse = await playerGet(pool, accountId);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].accountid).toEqual(accountId);

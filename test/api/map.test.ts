@@ -1,6 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
+import { mapCreate, mapGet } from "./api";
 
 let pool: Pool;
 
@@ -15,42 +16,8 @@ afterAll(async () => {
   await pool.end();
 });
 
-export const mapGet = (accountId: string) => {
-  return pool.query(
-    `
-      select * from Maps
-      where MapUid=$1
-    `,
-    [accountId]
-  );
-};
-
-export const mapCreate = ({
-  mapUid = faker.string.uuid(),
-  authorTime = faker.number.int({ min: 1, max: 20000 }),
-  name = faker.word.words(3),
-  body,
-  method = "POST",
-  headers = {
-    "x-api-key": "developer-test-key",
-  },
-}: {
-  mapUid?: string;
-  authorTime?: number;
-  name?: string;
-  body?: any;
-  method?: string;
-  headers?: any;
-} = {}) => {
-  return fetch("http://localhost:8081/maps", {
-    body: JSON.stringify(body ?? { mapUid, authorTime, name }),
-    method,
-    headers,
-  });
-};
-
 test("get map dne", async () => {
-  const response = await mapGet("000");
+  const response = await mapGet(pool, "000");
   expect(response.rowCount).toEqual(0);
 });
 
@@ -107,7 +74,7 @@ test("create map", async () => {
 
   expect(response.status).toEqual(200);
 
-  const dbResponse = await mapGet(mapUid);
+  const dbResponse = await mapGet(pool, mapUid);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].mapuid).toEqual(mapUid);
@@ -142,7 +109,7 @@ test("create map with properties", async () => {
 
   expect(response.status).toEqual(200);
 
-  const dbResponse = await mapGet(mapUid);
+  const dbResponse = await mapGet(pool, mapUid);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].mapuid).toEqual(mapUid);
@@ -178,7 +145,7 @@ test("create map repeat is an update", async () => {
 
   expect(response2.status).toEqual(200);
 
-  const dbResponse = await mapGet(mapUid);
+  const dbResponse = await mapGet(pool, mapUid);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].mapuid).toEqual(mapUid);
@@ -234,7 +201,7 @@ test("create map with properties repeat is an update", async () => {
 
   expect(response2.status).toEqual(200);
 
-  const dbResponse = await mapGet(mapUid);
+  const dbResponse = await mapGet(pool, mapUid);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].mapuid).toEqual(mapUid);
@@ -282,7 +249,7 @@ test("create map with properties repeat without properties doesnt override optio
 
   expect(response2.status).toEqual(200);
 
-  const dbResponse = await mapGet(mapUid);
+  const dbResponse = await mapGet(pool, mapUid);
 
   expect(dbResponse.rowCount).toEqual(1);
   expect(dbResponse.rows[0].mapuid).toEqual(mapUid);
