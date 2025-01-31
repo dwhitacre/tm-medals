@@ -96,3 +96,40 @@ export const medalTimesCreate = ({
     headers,
   });
 };
+
+export const apikeyCreate = (
+  pool: Pool,
+  accountId: string,
+  apikey = faker.string.uuid()
+) => {
+  return pool.query(
+    `
+      insert into ApiKeys(AccountId, Key)
+      values ($1, $2)
+    `,
+    [accountId, apikey]
+  );
+};
+
+export const playerPermissionsCreate = async (
+  pool: Pool,
+  accountId: string,
+  permissionName: string
+) => {
+  const result = await pool.query(
+    `
+      select PermissionId
+      from Permissions
+      where Name = $1
+    `,
+    [permissionName]
+  );
+
+  return pool.query(
+    `
+      insert into PlayerPermissions(AccountId, PermissionId)
+      values ($1, $2)
+    `,
+    [accountId, result.rows[0]]
+  );
+};

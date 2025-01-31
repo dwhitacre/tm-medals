@@ -1,4 +1,5 @@
 import type { Services } from "../services";
+import type Player from "./player";
 
 export type ApiPermissions = "admin" | "read";
 export type ApiMethods = "get" | "post" | "delete";
@@ -6,6 +7,7 @@ export type ApiMethods = "get" | "post" | "delete";
 type Cache = {
   url?: URL;
   permissions?: Array<ApiPermissions>;
+  me?: Player;
 };
 
 export class ApiRequest {
@@ -83,6 +85,15 @@ export class ApiRequest {
       this.logger.warn("Failed to parse domain", { json, error });
       return undefined;
     }
+  }
+
+  async me(): Promise<Player | undefined> {
+    if (this.#cache.me) return this.#cache.me;
+
+    const player = await this.services.players.getByApiKey(
+      this.raw.headers.get("x-api-key") || this.getQueryParam("api-key")
+    );
+    return (this.#cache.me = player);
   }
 }
 

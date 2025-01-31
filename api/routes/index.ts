@@ -2,6 +2,7 @@ import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
 import campaignIndices from "./campaign-indices";
 import maps from "./maps";
+import me from "./me";
 import medaltimes from "./medaltimes";
 import players from "./players";
 import ready from "./ready";
@@ -11,6 +12,7 @@ async function handle(req: ApiRequest): Promise<ApiResponse> {
   let response: ApiResponse;
   try {
     if (req.url.pathname === "/ready") response = await ready.handle(req);
+    else if (req.url.pathname === "/me") response = await me.handle(req);
     else if (req.url.pathname === "/maps") response = await maps.handle(req);
     else if (req.url.pathname === "/players")
       response = await players.handle(req);

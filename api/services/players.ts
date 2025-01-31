@@ -1,11 +1,27 @@
 import type { Db } from "./db";
-import type { Player } from "../domain/player";
+import { Player } from "../domain/player";
 
 export class Players {
   db: Db;
 
   constructor(db: Db) {
     this.db = db;
+  }
+
+  async getByApiKey(apikey?: string) {
+    if (!apikey) return undefined;
+
+    const result = await this.db.pool.query(
+      `
+        select p.AccountId, p.Name, p.DateModified
+        from Players p
+        join ApiKeys a on a.AccountId = p.AccountId
+        where Key = $1
+      `,
+      [apikey]
+    );
+    if (result.rowCount != 1) return undefined;
+    return Player.fromJson(result.rows[0]);
   }
 
   async insert(player: Player) {

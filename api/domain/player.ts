@@ -21,6 +21,14 @@ export class Player {
     this.accountId = accountId;
     this.name = name;
   }
+
+  toJson() {
+    return {
+      accountId: this.accountId,
+      name: this.name,
+      dateModified: this.dateModified,
+    };
+  }
 }
 
 export default Player;
