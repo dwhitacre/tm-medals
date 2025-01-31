@@ -4,12 +4,6 @@ processes:
   api:
     working_dir: api
     command: bun run watch
-    # readiness_probe:
-    #   http_get:
-    #     host: localhost
-    #     scheme: http
-    #     path: "/ready"
-    #     port: 8081
     environment:
       - "DATABASE_CONNSTR=postgres://tmmedals:Passw0rd!@localhost:5432/tmmedals?pool_max_conns=10"
       - "ADMIN_KEY=developer-test-key"

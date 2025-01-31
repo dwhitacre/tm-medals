@@ -2,8 +2,8 @@
   "name": "api",
   "module": "index.ts",
   "devDependencies": {
-    "@types/bun": "^1.1.16",
-    "@types/pg": "^8.11.10"
+    "@types/bun": "^1.2.1",
+    "@types/pg": "^8.11.11"
   },
   "peerDependencies": {
     "typescript": "^5.5.4"
