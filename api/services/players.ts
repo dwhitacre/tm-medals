@@ -13,15 +13,19 @@ export class Players {
 
     const result = await this.db.pool.query(
       `
-        select p.AccountId, p.Name, p.DateModified
+        select p.AccountId, p.Name, p.DateModified, perm.Name as Permission
         from Players p
+        left join PlayerPermissions pp on p.AccountId = pp.AccountId
+        left join Permissions perm on perm.Id = pp.PermissionId
         join ApiKeys a on a.AccountId = p.AccountId
         where Key = $1
       `,
       [apikey]
     );
-    if (result.rowCount != 1) return undefined;
-    return Player.fromJson(result.rows[0]);
+    if (!result.rowCount || result.rowCount < 1) return undefined;
+    return Player.fromJson(result.rows[0]).hydratePermissions(
+      result.rows.map((row) => row.permission)
+    );
   }
 
   async insert(player: Player) {

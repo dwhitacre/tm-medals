@@ -1,9 +1,30 @@
 import Json from "./json";
 
+export class Permissions {
+  static View = "view";
+  static PlayerManage = "player:manage";
+  static ZoneManage = "zone:manage";
+  static MapManage = "map:manage";
+  static MedalTimesManage = "medaltimes:manage";
+  static ApiKeyManage = "apikey:manage";
+  static Admin = "admin";
+
+  static #list: Array<string>;
+  static list() {
+    if (this.#list) return this.#list;
+    return (this.#list = Object.values(this));
+  }
+
+  static has(permission: string) {
+    return this.list().includes(permission);
+  }
+}
+
 export class Player {
   accountId: string;
   name: string;
   dateModified?: Date;
+  permissions: Array<Permissions> = [Permissions.View];
 
   static fromJson(json: { [_: string]: any }): Player {
     json = Json.lowercaseKeys(json);
@@ -27,7 +48,16 @@ export class Player {
       accountId: this.accountId,
       name: this.name,
       dateModified: this.dateModified,
+      permissions: this.permissions,
     };
+  }
+
+  hydratePermissions(permissions: Array<string> = []): Player {
+    this.permissions = [
+      ...this.permissions,
+      ...permissions.filter((p) => Permissions.has(p)),
+    ];
+    return this;
   }
 }
 

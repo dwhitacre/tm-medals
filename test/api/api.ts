@@ -118,7 +118,7 @@ export const playerPermissionsCreate = async (
 ) => {
   const result = await pool.query(
     `
-      select PermissionId
+      select Id
       from Permissions
       where Name = $1
     `,
@@ -130,6 +130,29 @@ export const playerPermissionsCreate = async (
       insert into PlayerPermissions(AccountId, PermissionId)
       values ($1, $2)
     `,
-    [accountId, result.rows[0]]
+    [accountId, result.rows[0].id]
+  );
+};
+
+export const playerPermissionsDelete = async (
+  pool: Pool,
+  accountId: string,
+  permissionName: string
+) => {
+  const result = await pool.query(
+    `
+      select Id
+      from Permissions
+      where Name = $1
+    `,
+    [permissionName]
+  );
+
+  return pool.query(
+    `
+      delete from PlayerPermissions
+      where AccountId = $1 and PermissionId = $2
+    `,
+    [accountId, result.rows[0].id]
   );
 };
