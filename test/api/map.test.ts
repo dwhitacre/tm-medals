@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
-import { mapCreate, mapGet } from "./api";
+import { mapCreate, mapGet, playerAdminCreate } from "./api";
 
 let pool: Pool;
 
@@ -29,39 +29,49 @@ test("create map no adminkey", async () => {
 });
 
 test("create map bad method", async () => {
-  const response = await mapCreate({ method: "DELETE" });
+  const apikey = await playerAdminCreate(pool);
+  const response = await mapCreate({ method: "DELETE", apikey });
   expect(response.status).toEqual(400);
 });
 
 test("create map bad body", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await mapCreate({
     body: faker.string.uuid(),
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create map no mapUid", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await mapCreate({
     body: {},
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create map no name", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await mapCreate({
     body: { mapUid: faker.string.uuid(), authorTime: 20000 },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create map no authorTime", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await mapCreate({
     body: { mapUid: faker.string.uuid(), name: faker.word.words(3) },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create map", async () => {
+  const apikey = await playerAdminCreate(pool);
   const mapUid = faker.string.uuid();
   const name = faker.word.words(3);
   const authorTime = faker.number.int({ min: 1, max: 20000 });
@@ -70,6 +80,7 @@ test("create map", async () => {
     mapUid,
     name,
     authorTime,
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -87,6 +98,7 @@ test("create map", async () => {
 });
 
 test("create map with properties", async () => {
+  const apikey = await playerAdminCreate(pool);
   const mapUid = faker.string.uuid();
   const name = faker.word.words(3);
   const authorTime = faker.number.int({ min: 1, max: 20000 });
@@ -105,6 +117,7 @@ test("create map with properties", async () => {
       totdDate,
       nadeo,
     },
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -122,6 +135,7 @@ test("create map with properties", async () => {
 });
 
 test("create map repeat is an update", async () => {
+  const apikey = await playerAdminCreate(pool);
   const mapUid = faker.string.uuid();
   const name = faker.word.words(3);
   const authorTime = faker.number.int({ min: 1, max: 20000 });
@@ -130,6 +144,7 @@ test("create map repeat is an update", async () => {
     mapUid,
     name,
     authorTime,
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -141,6 +156,7 @@ test("create map repeat is an update", async () => {
     mapUid,
     name: name2,
     authorTime: authorTime2,
+    apikey,
   });
 
   expect(response2.status).toEqual(200);
@@ -158,6 +174,7 @@ test("create map repeat is an update", async () => {
 });
 
 test("create map with properties repeat is an update", async () => {
+  const apikey = await playerAdminCreate(pool);
   const mapUid = faker.string.uuid();
   const name = faker.word.words(3);
   const authorTime = faker.number.int({ min: 1, max: 20000 });
@@ -176,6 +193,7 @@ test("create map with properties repeat is an update", async () => {
       totdDate,
       nadeo,
     },
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -197,6 +215,7 @@ test("create map with properties repeat is an update", async () => {
       totdDate: totdDate2,
       nadeo: nadeo2,
     },
+    apikey,
   });
 
   expect(response2.status).toEqual(200);
@@ -214,6 +233,7 @@ test("create map with properties repeat is an update", async () => {
 });
 
 test("create map with properties repeat without properties doesnt override optional parameters", async () => {
+  const apikey = await playerAdminCreate(pool);
   const mapUid = faker.string.uuid();
   const name = faker.word.words(3);
   const authorTime = faker.number.int({ min: 1, max: 20000 });
@@ -232,6 +252,7 @@ test("create map with properties repeat without properties doesnt override optio
       totdDate,
       nadeo,
     },
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -245,6 +266,7 @@ test("create map with properties repeat without properties doesnt override optio
       name: name2,
       authorTime: authorTime2,
     },
+    apikey,
   });
 
   expect(response2.status).toEqual(200);

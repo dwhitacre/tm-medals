@@ -2,11 +2,13 @@ import Route from "./route";
 import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
 import Map from "../domain/map";
+import { Permissions } from "../domain/player";
 
 class Maps extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
     if (!req.checkMethod("post")) return ApiResponse.badRequest(req);
-    if (!req.checkPermission("admin")) return ApiResponse.unauthorized(req);
+    if (!(await req.checkPermission(Permissions.Admin)))
+      return ApiResponse.unauthorized(req);
 
     const map = await req.parse(Map);
     if (!map) return ApiResponse.badRequest(req);

@@ -2,6 +2,7 @@ import Route from "./route";
 import type ApiRequest from "../domain/apirequest";
 import ApiResponse from "../domain/apiresponse";
 import MedalTime from "../domain/medaltime";
+import { Permissions } from "../domain/player";
 
 class MedalTimes extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
@@ -21,7 +22,8 @@ class MedalTimes extends Route {
   }
 
   async handlePost(req: ApiRequest): Promise<ApiResponse> {
-    if (!req.checkPermission("admin")) return ApiResponse.unauthorized(req);
+    if (!(await req.checkPermission(Permissions.Admin)))
+      return ApiResponse.unauthorized(req);
 
     const medalTime = await req.parse(MedalTime);
     if (!medalTime) return ApiResponse.badRequest(req);

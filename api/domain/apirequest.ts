@@ -1,12 +1,10 @@
 import type { Services } from "../services";
 import type Player from "./player";
 
-export type ApiPermissions = "admin" | "read";
 export type ApiMethods = "get" | "post" | "delete";
 
 type Cache = {
   url?: URL;
-  permissions?: Array<ApiPermissions>;
   me?: Player;
 };
 
@@ -35,22 +33,6 @@ export class ApiRequest {
     return this.#cache.url ?? (this.#cache.url = new URL(this.raw.url));
   }
 
-  get permissions(): Array<ApiPermissions> {
-    if (this.#cache.permissions) return this.#cache.permissions;
-
-    const permissions: Array<ApiPermissions> = ["read"];
-    if (
-      process.env.ADMIN_KEY &&
-      [
-        this.raw.headers.get("x-api-key"),
-        this.getQueryParam("api-key"),
-      ].includes(process.env.ADMIN_KEY)
-    )
-      permissions.push("admin");
-
-    return (this.#cache.permissions = permissions);
-  }
-
   get method(): ApiMethods {
     return this.raw.method.toLowerCase() as ApiMethods;
   }
@@ -65,8 +47,11 @@ export class ApiRequest {
     return allowed.includes(this.method);
   }
 
-  checkPermission(required: ApiPermissions): boolean {
-    return this.permissions.includes(required);
+  async checkPermission(permission: string): Promise<boolean> {
+    const me = await this.me();
+    if (!me) return false;
+
+    return me.permissions.includes(permission);
   }
 
   async parse<

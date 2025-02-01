@@ -20,6 +20,7 @@ export const mapCreate = ({
   headers = {
     "x-api-key": "developer-test-key",
   },
+  apikey,
 }: {
   mapUid?: string;
   authorTime?: number;
@@ -27,11 +28,12 @@ export const mapCreate = ({
   body?: any;
   method?: string;
   headers?: any;
+  apikey?: string;
 } = {}) => {
   return fetch("http://localhost:8081/maps", {
     body: JSON.stringify(body ?? { mapUid, authorTime, name }),
     method,
-    headers,
+    headers: apikey ? { "x-api-key": apikey } : headers,
   });
 };
 
@@ -53,17 +55,19 @@ export const playerCreate = ({
   headers = {
     "x-api-key": "developer-test-key",
   },
+  apikey,
 }: {
   accountId?: string;
   name?: string;
   body?: any;
   method?: string;
   headers?: any;
+  apikey?: string;
 } = {}) => {
   return fetch("http://localhost:8081/players", {
     body: JSON.stringify(body ?? { accountId, name }),
     method,
-    headers,
+    headers: apikey ? { "x-api-key": apikey } : headers,
   });
 };
 
@@ -82,6 +86,7 @@ export const medalTimesCreate = ({
   headers = {
     "x-api-key": "developer-test-key",
   },
+  apikey,
 }: {
   accountId?: string;
   mapUid?: string;
@@ -89,11 +94,12 @@ export const medalTimesCreate = ({
   body?: any;
   method?: string;
   headers?: any;
+  apikey?: string;
 } = {}) => {
   return fetch("http://localhost:8081/medaltimes", {
     body: JSON.stringify(body ?? { accountId, mapUid, medalTime }),
     method,
-    headers,
+    headers: apikey ? { "x-api-key": apikey } : headers,
   });
 };
 
@@ -155,4 +161,23 @@ export const playerPermissionsDelete = async (
     `,
     [accountId, result.rows[0].id]
   );
+};
+
+export const playerAdminCreate = async (
+  pool: Pool,
+  accountId: string = faker.string.uuid()
+) => {
+  await pool.query(
+    `
+      insert into Players(AccountId, Name)
+      values ($1, $2)
+    `,
+    [accountId, faker.internet.username()]
+  );
+  await playerPermissionsCreate(pool, accountId, "admin");
+
+  const apikey = faker.string.uuid();
+  await apikeyCreate(pool, accountId, apikey);
+
+  return apikey;
 };

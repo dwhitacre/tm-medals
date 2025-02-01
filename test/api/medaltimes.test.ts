@@ -5,16 +5,19 @@ import {
   mapCreate,
   medalTimesCreate,
   medalTimesGet,
+  playerAdminCreate,
   playerCreate,
 } from "./api";
 
 let pool: Pool;
+let apikey: string;
 
-beforeAll(() => {
+beforeAll(async () => {
   pool = new Pool({
     connectionString:
       "postgres://tmmedals:Passw0rd!@localhost:5432/tmmedals?pool_max_conns=10",
   });
+  apikey = await playerAdminCreate(pool);
 });
 
 afterAll(async () => {
@@ -117,13 +120,14 @@ test("create medaltimes no adminkey", async () => {
 });
 
 test("create medaltimes bad method", async () => {
-  const response = await medalTimesCreate({ method: "DELETE" });
+  const response = await medalTimesCreate({ method: "DELETE", apikey });
   expect(response.status).toEqual(400);
 });
 
 test("create medaltimes bad body", async () => {
   const response = await medalTimesCreate({
     body: faker.string.uuid(),
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
@@ -134,6 +138,7 @@ test("create medaltimes no mapUid", async () => {
       medalTime: faker.number.int({ min: 1, max: 20000 }),
       accountId: faker.string.uuid(),
     },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
@@ -144,6 +149,7 @@ test("create medaltimes no medalTime", async () => {
       accountId: faker.string.uuid(),
       mapUid: faker.string.uuid(),
     },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
@@ -154,6 +160,7 @@ test("create medaltimes no accountId", async () => {
       medalTime: faker.number.int({ min: 1, max: 20000 }),
       mapUid: faker.string.uuid(),
     },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
@@ -164,6 +171,7 @@ test("create medaltimes", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -173,6 +181,7 @@ test("create medaltimes", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
   const medalTime = faker.number.int({ min: 1, max: 20000 });
 
@@ -180,6 +189,7 @@ test("create medaltimes", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -213,6 +223,7 @@ test("create medaltimes player dne", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
   const medalTime = faker.number.int({ min: 1, max: 20000 });
 
@@ -220,6 +231,7 @@ test("create medaltimes player dne", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(500);
 });
@@ -230,6 +242,7 @@ test("create medaltimes map dne", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -240,6 +253,7 @@ test("create medaltimes map dne", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(500);
 });
@@ -250,6 +264,7 @@ test("create medaltimes multiple players", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const accountId2 = faker.string.uuid();
@@ -257,6 +272,7 @@ test("create medaltimes multiple players", async () => {
   await playerCreate({
     accountId: accountId2,
     name: playerName2,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -266,6 +282,7 @@ test("create medaltimes multiple players", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
   const medalTime = faker.number.int({ min: 1, max: 20000 });
 
@@ -273,6 +290,7 @@ test("create medaltimes multiple players", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -280,6 +298,7 @@ test("create medaltimes multiple players", async () => {
     mapUid,
     accountId: accountId2,
     medalTime,
+    apikey,
   });
   expect(response2.status).toEqual(200);
 
@@ -298,6 +317,7 @@ test("create medaltimes multiple maps single map request", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -307,6 +327,7 @@ test("create medaltimes multiple maps single map request", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   const mapUid2 = faker.string.uuid();
@@ -314,6 +335,7 @@ test("create medaltimes multiple maps single map request", async () => {
     mapUid: mapUid2,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   const medalTime = faker.number.int({ min: 1, max: 20000 });
@@ -322,6 +344,7 @@ test("create medaltimes multiple maps single map request", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -329,6 +352,7 @@ test("create medaltimes multiple maps single map request", async () => {
     mapUid: mapUid2,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response2.status).toEqual(200);
 
@@ -348,6 +372,7 @@ test("create medaltimes multiple maps all maps request", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -357,6 +382,7 @@ test("create medaltimes multiple maps all maps request", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   const mapUid2 = faker.string.uuid();
@@ -364,6 +390,7 @@ test("create medaltimes multiple maps all maps request", async () => {
     mapUid: mapUid2,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   const medalTime = faker.number.int({ min: 1, max: 20000 });
@@ -372,6 +399,7 @@ test("create medaltimes multiple maps all maps request", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -379,6 +407,7 @@ test("create medaltimes multiple maps all maps request", async () => {
     mapUid: mapUid2,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response2.status).toEqual(200);
 
@@ -402,6 +431,7 @@ test("create medaltimes with map properties", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -421,6 +451,7 @@ test("create medaltimes with map properties", async () => {
       totdDate,
       nadeo,
     },
+    apikey,
   });
   const medalTime = faker.number.int({ min: 1, max: 20000 });
 
@@ -428,6 +459,7 @@ test("create medaltimes with map properties", async () => {
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -460,6 +492,7 @@ test("create medaltimes with properties", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -469,6 +502,7 @@ test("create medaltimes with properties", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   const medalTime = faker.number.int({ min: 1, max: 20000 });
@@ -482,6 +516,7 @@ test("create medaltimes with properties", async () => {
       customMedalTime,
       reason,
     },
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -511,6 +546,7 @@ test("create medaltimes repeat is an update", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -520,6 +556,7 @@ test("create medaltimes repeat is an update", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
   const medalTime = faker.number.int({ min: 1, max: 20000 });
 
@@ -527,12 +564,14 @@ test("create medaltimes repeat is an update", async () => {
     mapUid,
     accountId,
     medalTime: faker.number.int({ min: 1, max: 20000 }),
+    apikey,
   });
 
   const response = await medalTimesCreate({
     mapUid,
     accountId,
     medalTime,
+    apikey,
   });
   expect(response.status).toEqual(200);
 
@@ -561,6 +600,7 @@ test("create medaltimes with properties is an update", async () => {
   await playerCreate({
     accountId,
     name: playerName,
+    apikey,
   });
 
   const mapUid = faker.string.uuid();
@@ -570,6 +610,7 @@ test("create medaltimes with properties is an update", async () => {
     mapUid,
     authorTime,
     name: mapName,
+    apikey,
   });
 
   await medalTimesCreate({
@@ -580,6 +621,7 @@ test("create medaltimes with properties is an update", async () => {
       customMedalTime: faker.number.int({ min: 1, max: 20000 }),
       reason: faker.word.words(3),
     },
+    apikey,
   });
 
   const medalTime = faker.number.int({ min: 1, max: 20000 });
@@ -593,6 +635,7 @@ test("create medaltimes with properties is an update", async () => {
       customMedalTime,
       reason,
     },
+    apikey,
   });
   expect(response.status).toEqual(200);
 

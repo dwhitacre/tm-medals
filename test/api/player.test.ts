@@ -1,7 +1,7 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
-import { playerCreate, playerGet } from "./api";
+import { playerAdminCreate, playerCreate, playerGet } from "./api";
 
 let pool: Pool;
 
@@ -29,37 +29,46 @@ test("create player no adminkey", async () => {
 });
 
 test("create player bad method", async () => {
-  const response = await playerCreate({ method: "DELETE" });
+  const apikey = await playerAdminCreate(pool);
+  const response = await playerCreate({ method: "DELETE", apikey });
   expect(response.status).toEqual(400);
 });
 
 test("create player bad body", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await playerCreate({
     body: faker.string.uuid(),
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create player no account id", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await playerCreate({
     body: {},
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create player no name", async () => {
+  const apikey = await playerAdminCreate(pool);
   const response = await playerCreate({
     body: { accountId: faker.string.uuid() },
+    apikey,
   });
   expect(response.status).toEqual(400);
 });
 
 test("create player", async () => {
+  const apikey = await playerAdminCreate(pool);
   const accountId = faker.string.uuid();
   const name = faker.internet.username();
   const response = await playerCreate({
     accountId,
     name,
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -72,11 +81,13 @@ test("create player", async () => {
 });
 
 test("create player repeat is an update", async () => {
+  const apikey = await playerAdminCreate(pool);
   const accountId = faker.string.uuid();
   const name = faker.internet.username();
   const response = await playerCreate({
     accountId,
     name,
+    apikey,
   });
 
   expect(response.status).toEqual(200);
@@ -85,6 +96,7 @@ test("create player repeat is an update", async () => {
   const response2 = await playerCreate({
     accountId,
     name: name2,
+    apikey,
   });
 
   expect(response2.status).toEqual(200);
