@@ -7,7 +7,9 @@ import { Permissions } from "../domain/player";
 class Maps extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
     if (!req.checkMethod("post")) return ApiResponse.badRequest(req);
-    if (!(await req.checkPermission(Permissions.Admin)))
+    if (
+      !(await req.checkPermission([Permissions.Admin, Permissions.MapManage]))
+    )
       return ApiResponse.unauthorized(req);
 
     const map = await req.parse(Map);
@@ -22,7 +24,7 @@ class Maps extends Route {
     }
 
     await req.services.maps.upsert(map);
-    return ApiResponse.ok(req);
+    return ApiResponse.ok(req, { map });
   }
 }
 

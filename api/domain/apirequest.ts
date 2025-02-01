@@ -47,11 +47,13 @@ export class ApiRequest {
     return allowed.includes(this.method);
   }
 
-  async checkPermission(permission: string): Promise<boolean> {
+  async checkPermission(permission: Array<string> | string): Promise<boolean> {
+    if (!(permission instanceof Array)) permission = [permission];
+
     const me = await this.me();
     if (!me) return false;
 
-    return me.permissions.includes(permission);
+    return permission.some((p) => me.hasPermission(p));
   }
 
   async parse<

@@ -163,10 +163,13 @@ export const playerPermissionsDelete = async (
   );
 };
 
-export const playerAdminCreate = async (
+export const playerWithPermissionCreate = async (
   pool: Pool,
+  permission: Array<string> | string,
   accountId: string = faker.string.uuid()
 ) => {
+  permission = permission instanceof Array ? permission : [permission];
+
   await pool.query(
     `
       insert into Players(AccountId, Name)
@@ -174,10 +177,18 @@ export const playerAdminCreate = async (
     `,
     [accountId, faker.internet.username()]
   );
-  await playerPermissionsCreate(pool, accountId, "admin");
+
+  for (let i = 0; i < permission.length; i++) {
+    await playerPermissionsCreate(pool, accountId, permission[i]);
+  }
 
   const apikey = faker.string.uuid();
   await apikeyCreate(pool, accountId, apikey);
 
   return apikey;
 };
+
+export const playerAdminCreate = async (
+  pool: Pool,
+  accountId: string = faker.string.uuid()
+) => playerWithPermissionCreate(pool, "admin", accountId);

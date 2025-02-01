@@ -6,14 +6,19 @@ import Player, { Permissions } from "../domain/player";
 class Players extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
     if (!req.checkMethod("post")) return ApiResponse.badRequest(req);
-    if (!(await req.checkPermission(Permissions.Admin)))
+    if (
+      !(await req.checkPermission([
+        Permissions.Admin,
+        Permissions.PlayerManage,
+      ]))
+    )
       return ApiResponse.unauthorized(req);
 
     const player = await req.parse(Player);
     if (!player) return ApiResponse.badRequest(req);
 
     await req.services.players.upsert(player);
-    return ApiResponse.ok(req);
+    return ApiResponse.ok(req, { player });
   }
 }
 

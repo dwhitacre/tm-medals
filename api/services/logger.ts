@@ -8,6 +8,10 @@ export type LogMessage = {
 export class Logger {
   context: LogProperties = {};
 
+  get isDebug() {
+    return process.env.DEBUG;
+  }
+
   getMessage(
     message: string,
     properties: LogProperties = {}
@@ -18,11 +22,11 @@ export class Logger {
       ...this.context,
       ...properties,
     };
-    return process.env.DEBUG ? logMessage : JSON.stringify(logMessage);
+    return this.isDebug ? logMessage : JSON.stringify(logMessage);
   }
 
   debug(message: string, properties?: LogProperties) {
-    if (!process.env.DEBUG) return;
+    if (!this.isDebug) return;
     this.info(message, properties);
   }
 

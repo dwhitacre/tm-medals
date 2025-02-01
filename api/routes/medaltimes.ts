@@ -22,7 +22,12 @@ class MedalTimes extends Route {
   }
 
   async handlePost(req: ApiRequest): Promise<ApiResponse> {
-    if (!(await req.checkPermission(Permissions.Admin)))
+    if (
+      !(await req.checkPermission([
+        Permissions.Admin,
+        Permissions.MedalTimesManage,
+      ]))
+    )
       return ApiResponse.unauthorized(req);
 
     const medalTime = await req.parse(MedalTime);

@@ -59,6 +59,10 @@ export class Player {
     ];
     return this;
   }
+
+  hasPermission(permission: string): boolean {
+    return this.permissions.includes(permission);
+  }
 }
 
 export default Player;
