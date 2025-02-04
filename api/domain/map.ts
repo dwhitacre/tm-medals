@@ -17,7 +17,7 @@ export class Map {
     if (!json.authortime) throw new Error("Failed to get authorTime");
     if (!json.name) throw new Error("Failed to get name");
 
-    const map = new this(json.mapuid, json.authortime, json.name);
+    const map = new Map(json.mapuid, json.authortime, json.name);
     if (json.campaign) map.campaign = json.campaign;
     if (json.campaignindex) map.campaignIndex = json.campaignindex;
     if (json.totddate) map.totdDate = json.totddate;

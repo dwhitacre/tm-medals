@@ -8,16 +8,30 @@ export class Maps {
     this.db = db;
   }
 
-  async get(map: Map) {
+  async get(map: Map | string) {
+    const mapUid = typeof map == "string" ? map : map.mapUid;
     const response = await this.db.pool.query(
       `
         select * from Maps
         where MapUid=$1
       `,
-      [map.mapUid]
+      [mapUid]
     );
-    if (response && response.rowCount !== 1) return undefined;
+    if (!response?.rowCount) return undefined;
+    if (response.rowCount !== 1) return undefined;
     return Map.fromJson(response.rows[0]);
+  }
+
+  async getAll(campaign: string) {
+    const response = await this.db.pool.query(
+      `
+        select * from Maps
+        where Campaign=$1
+      `,
+      [campaign]
+    );
+    if (!response?.rowCount) return [];
+    return response.rows.map(Map.fromJson);
   }
 
   async insert(map: Map) {

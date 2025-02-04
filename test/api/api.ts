@@ -1,14 +1,12 @@
 import { faker } from "@faker-js/faker";
 import type { Pool } from "pg";
 
-export const mapGet = (pool: Pool, accountId: string) => {
-  return pool.query(
-    `
-      select * from Maps
-      where MapUid=$1
-    `,
-    [accountId]
-  );
+export const mapGet = (pool: Pool, mapUid: string) => {
+  return fetch(`http://localhost:8081/maps?mapUid=${mapUid}`);
+};
+
+export const mapGetAll = (campaign: string) => {
+  return fetch(`http://localhost:8081/maps?campaign=${campaign}`);
 };
 
 export const mapCreate = ({

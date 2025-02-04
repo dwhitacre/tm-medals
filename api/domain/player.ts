@@ -32,7 +32,7 @@ export class Player {
     if (!json?.accountid) throw new Error("Failed to get accountId");
     if (!json.name) throw new Error("Failed to get name");
 
-    const player = new this(json.accountid, json.name);
+    const player = new Player(json.accountid, json.name);
     if (json.datemodified) player.dateModified = json.datemodified;
 
     return player;

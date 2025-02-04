@@ -6,6 +6,32 @@ import { Permissions } from "../domain/player";
 
 class Maps extends Route {
   async handle(req: ApiRequest): Promise<ApiResponse> {
+    if (!req.checkMethod(["get", "post"])) return ApiResponse.badRequest(req);
+    if (req.checkMethod("get")) return this.handleGet(req);
+    return this.handlePost(req);
+  }
+
+  async handleGet(req: ApiRequest): Promise<ApiResponse> {
+    if (!req.checkMethod("get")) return ApiResponse.badRequest(req);
+
+    const mapUid = req.getQueryParam("mapUid");
+    if (mapUid) {
+      const map = await req.services.maps.get(mapUid);
+      if (!map) return ApiResponse.badRequest(req);
+
+      return ApiResponse.ok(req, { map: map.toJson() });
+    }
+
+    const campaign = req.getQueryParam("campaign");
+    if (!campaign) return ApiResponse.badRequest(req);
+
+    const maps = await req.services.maps.getAll(campaign);
+    if (!maps) return ApiResponse.badRequest(req);
+
+    return ApiResponse.ok(req, { maps: maps.map((m) => m.toJson()) });
+  }
+
+  async handlePost(req: ApiRequest): Promise<ApiResponse> {
     if (!req.checkMethod("post")) return ApiResponse.badRequest(req);
     if (
       !(await req.checkPermission([Permissions.Admin, Permissions.MapManage]))
