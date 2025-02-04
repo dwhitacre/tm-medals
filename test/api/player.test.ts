@@ -1,7 +1,12 @@
 import { afterAll, beforeAll, expect, test } from "bun:test";
 import { faker } from "@faker-js/faker";
 import { Pool } from "pg";
-import { playerAdminCreate, playerCreate, playerGet } from "./api";
+import {
+  playerAdminCreate,
+  playerCreate,
+  playerGet,
+  playerGetAll,
+} from "./api";
 
 let pool: Pool;
 
@@ -18,7 +23,7 @@ afterAll(async () => {
 
 test("get player dne", async () => {
   const response = await playerGet(pool, "000");
-  expect(response.rowCount).toEqual(0);
+  expect(response.status).toEqual(400);
 });
 
 test("create player no adminkey", async () => {
@@ -73,11 +78,12 @@ test("create player", async () => {
 
   expect(response.status).toEqual(200);
 
-  const dbResponse = await playerGet(pool, accountId);
+  const playerResponse = await playerGet(pool, accountId);
+  const json = await playerResponse.json();
 
-  expect(dbResponse.rowCount).toEqual(1);
-  expect(dbResponse.rows[0].accountid).toEqual(accountId);
-  expect(dbResponse.rows[0].name).toEqual(name);
+  expect(json.player).toBeDefined();
+  expect(json.player.accountId).toEqual(accountId);
+  expect(json.player.name).toEqual(name);
 });
 
 test("create player repeat is an update", async () => {
@@ -101,9 +107,29 @@ test("create player repeat is an update", async () => {
 
   expect(response2.status).toEqual(200);
 
-  const dbResponse = await playerGet(pool, accountId);
+  const playerResponse = await playerGet(pool, accountId);
+  const json = await playerResponse.json();
 
-  expect(dbResponse.rowCount).toEqual(1);
-  expect(dbResponse.rows[0].accountid).toEqual(accountId);
-  expect(dbResponse.rows[0].name).toEqual(name2);
+  expect(json.player).toBeDefined();
+  expect(json.player.accountId).toEqual(accountId);
+  expect(json.player.name).toEqual(name2);
+});
+
+test("get all", async () => {
+  const apikey = await playerAdminCreate(pool);
+  const accountId = faker.string.uuid();
+  const name = faker.internet.username();
+  const response = await playerCreate({
+    accountId,
+    name,
+    apikey,
+  });
+
+  expect(response.status).toEqual(200);
+
+  const playerResponse = await playerGetAll();
+  const json = await playerResponse.json();
+
+  expect(json.players).toBeDefined();
+  expect(json.players.length).toBeGreaterThan(0);
 });

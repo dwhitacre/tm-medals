@@ -8,6 +8,28 @@ export class Players {
     this.db = db;
   }
 
+  async get(accountId: string) {
+    const result = await this.db.pool.query(
+      `
+        select * from Players
+        where AccountId=$1
+      `,
+      [accountId]
+    );
+    if (!result.rowCount || result.rowCount !== 1) return undefined;
+    return Player.fromJson(result.rows[0]);
+  }
+
+  async getAll() {
+    const result = await this.db.pool.query(
+      `
+        select * from Players
+      `
+    );
+    if (!result?.rowCount) return [];
+    return result.rows.map(Player.fromJson);
+  }
+
   async getByApiKey(apikey?: string) {
     if (!apikey) return undefined;
 
