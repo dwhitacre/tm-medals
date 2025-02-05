@@ -51,8 +51,10 @@ test("apikey:manage", async () => {
 
 test("medaltimes:manage", async () => {
   const apikey = await playerWithPermissionCreate(pool, "medaltimes:manage");
+  let response = await fetch(`http://localhost:8081/me?api-key=${apikey}`);
+  const accountId = (await response.json()).me.accountId;
 
-  let response = await mapCreate({ apikey });
+  response = await mapCreate({ apikey });
   expect(response.status).toBe(401);
 
   response = await playerCreate({ apikey });
@@ -61,9 +63,6 @@ test("medaltimes:manage", async () => {
   const adminApiKey = await playerAdminCreate(pool);
   response = await mapCreate({ apikey: adminApiKey });
   const mapUid = (await response.json()).map.mapUid;
-
-  response = await playerCreate({ apikey: adminApiKey });
-  const accountId = (await response.json()).player.accountId;
 
   response = await medalTimesCreate({ apikey, mapUid, accountId });
   expect(response.status).toBe(200);
@@ -159,14 +158,15 @@ test("multiple - map:manage, player:manage, medaltimes:manage", async () => {
     "medaltimes:manage",
     "player:manage",
   ]);
+  let response = await fetch(`http://localhost:8081/me?api-key=${apikey}`);
+  const accountId = (await response.json()).me.accountId;
 
-  let response = await mapCreate({ apikey });
+  response = await mapCreate({ apikey });
   expect(response.status).toBe(200);
   const mapUid = (await response.json()).map.mapUid;
 
   response = await playerCreate({ apikey });
   expect(response.status).toBe(200);
-  const accountId = (await response.json()).player.accountId;
 
   response = await medalTimesCreate({ apikey, accountId, mapUid });
   expect(response.status).toBe(200);

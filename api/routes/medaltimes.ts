@@ -33,6 +33,12 @@ class MedalTimes extends Route {
     const medalTime = await req.parse(MedalTime);
     if (!medalTime) return ApiResponse.badRequest(req);
 
+    if (
+      (await req.checkPermission(Permissions.MedalTimesManage)) &&
+      medalTime.accountId !== (await req.me())?.accountId
+    )
+      return ApiResponse.unauthorized(req);
+
     await req.services.medaltimes.upsert(medalTime);
     return ApiResponse.ok(req);
   }
