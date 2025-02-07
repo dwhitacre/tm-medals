@@ -23,6 +23,7 @@ export class Permissions {
 export class Player {
   accountId: string;
   name: string;
+  color: string;
   dateModified?: Date;
   permissions: Array<Permissions> = [Permissions.View];
 
@@ -31,22 +32,25 @@ export class Player {
 
     if (!json?.accountid) throw new Error("Failed to get accountId");
     if (!json.name) throw new Error("Failed to get name");
+    if (!json.color) throw new Error("Failed to get color");
 
-    const player = new Player(json.accountid, json.name);
+    const player = new Player(json.accountid, json.name, json.color);
     if (json.datemodified) player.dateModified = json.datemodified;
 
     return player;
   }
 
-  constructor(accountId: string, name: string) {
+  constructor(accountId: string, name: string, color: string) {
     this.accountId = accountId;
     this.name = name;
+    this.color = color;
   }
 
   toJson() {
     return {
       accountId: this.accountId,
       name: this.name,
+      color: this.color,
       dateModified: this.dateModified,
       permissions: this.permissions,
     };

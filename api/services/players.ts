@@ -35,7 +35,7 @@ export class Players {
 
     const result = await this.db.pool.query(
       `
-        select p.AccountId, p.Name, p.DateModified, perm.Name as Permission
+        select p.AccountId, p.Name, p.Color, p.DateModified, perm.Name as Permission
         from Players p
         left join PlayerPermissions pp on p.AccountId = pp.AccountId
         left join Permissions perm on perm.Id = pp.PermissionId
@@ -53,10 +53,10 @@ export class Players {
   async insert(player: Player) {
     return this.db.pool.query(
       `
-        insert into Players (AccountId, Name)
-        values ($1, $2)
+        insert into Players (AccountId, Name, Color)
+        values ($1, $2, $3)
       `,
-      [player.accountId, player.name]
+      [player.accountId, player.name, player.color]
     );
   }
 
@@ -64,10 +64,10 @@ export class Players {
     return this.db.pool.query(
       `
         update Players
-        set Name=$2
+        set Name=$2, Color=$3
         where AccountId=$1
       `,
-      [player.accountId, player.name]
+      [player.accountId, player.name, player.color]
     );
   }
 

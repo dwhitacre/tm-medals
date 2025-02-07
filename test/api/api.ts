@@ -46,6 +46,7 @@ export const playerGetAll = () => {
 export const playerCreate = ({
   accountId = faker.string.uuid(),
   name = faker.internet.username(),
+  color = "3F3",
   body,
   method = "POST",
   headers = {
@@ -55,13 +56,14 @@ export const playerCreate = ({
 }: {
   accountId?: string;
   name?: string;
+  color?: string;
   body?: any;
   method?: string;
   headers?: any;
   apikey?: string;
 } = {}) => {
   return fetch("http://localhost:8081/players", {
-    body: JSON.stringify(body ?? { accountId, name }),
+    body: JSON.stringify(body ?? { accountId, name, color }),
     method,
     headers: apikey ? { "x-api-key": apikey } : headers,
   });

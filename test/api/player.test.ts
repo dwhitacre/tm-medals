@@ -70,9 +70,11 @@ test("create player", async () => {
   const apikey = await playerAdminCreate(pool);
   const accountId = faker.string.uuid();
   const name = faker.internet.username();
+  const color = "3D0";
   const response = await playerCreate({
     accountId,
     name,
+    color,
     apikey,
   });
 
@@ -84,6 +86,7 @@ test("create player", async () => {
   expect(json.player).toBeDefined();
   expect(json.player.accountId).toEqual(accountId);
   expect(json.player.name).toEqual(name);
+  expect(json.player.color).toEqual(color);
 });
 
 test("create player repeat is an update", async () => {
