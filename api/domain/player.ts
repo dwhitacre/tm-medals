@@ -26,6 +26,7 @@ export class Player {
   color: string;
   dateModified?: Date;
   permissions: Array<Permissions> = [Permissions.View];
+  displayName: string = "";
 
   static fromJson(json: { [_: string]: any }): Player {
     json = Json.lowercaseKeys(json);
@@ -36,6 +37,7 @@ export class Player {
 
     const player = new Player(json.accountid, json.name, json.color);
     if (json.datemodified) player.dateModified = json.datemodified;
+    if (json.displayname) player.displayName = json.displayname;
 
     return player;
   }
@@ -51,6 +53,7 @@ export class Player {
       accountId: this.accountId,
       name: this.name,
       color: this.color,
+      displayName: this.displayName,
       dateModified: this.dateModified,
       permissions: this.permissions,
     };
