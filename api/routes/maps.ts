@@ -23,11 +23,15 @@ class Maps extends Route {
     }
 
     const campaign = req.getQueryParam("campaign");
-    if (!campaign) return ApiResponse.badRequest(req);
+    if (campaign) {
+      const maps = await req.services.maps.getCampaign(campaign);
+      if (!maps) return ApiResponse.badRequest(req);
 
-    const maps = await req.services.maps.getAll(campaign);
+      return ApiResponse.ok(req, { maps: maps.map((m) => m.toJson()) });
+    }
+
+    const maps = await req.services.maps.getAll();
     if (!maps) return ApiResponse.badRequest(req);
-
     return ApiResponse.ok(req, { maps: maps.map((m) => m.toJson()) });
   }
 

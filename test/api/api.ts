@@ -5,8 +5,12 @@ export const mapGet = (_: Pool, mapUid: string) => {
   return fetch(`http://localhost:8081/maps?mapUid=${mapUid}`);
 };
 
-export const mapGetAll = (campaign: string) => {
+export const mapGetCampaign = (campaign: string) => {
   return fetch(`http://localhost:8081/maps?campaign=${campaign}`);
+};
+
+export const mapGetAll = () => {
+  return fetch(`http://localhost:8081/maps`);
 };
 
 export const mapCreate = ({

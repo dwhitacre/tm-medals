@@ -22,13 +22,24 @@ export class Maps {
     return Map.fromJson(response.rows[0]);
   }
 
-  async getAll(campaign: string) {
+  async getCampaign(campaign: string) {
     const response = await this.db.pool.query(
       `
         select * from Maps
         where Campaign=$1
       `,
       [campaign]
+    );
+    if (!response?.rowCount) return [];
+    return response.rows.map(Map.fromJson);
+  }
+
+  async getAll() {
+    const response = await this.db.pool.query(
+      `
+        select * from Maps
+      `,
+      []
     );
     if (!response?.rowCount) return [];
     return response.rows.map(Map.fromJson);
