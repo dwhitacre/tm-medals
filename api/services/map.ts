@@ -67,7 +67,7 @@ export class Maps {
     return this.db.pool.query(
       `
         update Maps
-        set AuthorTime=$2, Name=$3, Campaign=$4, CampaignIndex=$5, TotdDate=$6, Nadeo=$7
+        set AuthorTime=$2, Name=$3, Campaign=$4, CampaignIndex=$5, TotdDate=$6, Nadeo=$7, DateModified=now()
         where MapUid=$1
       `,
       [

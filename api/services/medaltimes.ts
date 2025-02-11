@@ -57,7 +57,7 @@ export class MedalTimes {
     return this.db.pool.query(
       `
         update MedalTimes
-        set MedalTime=$2, CustomMedalTime=$3, Reason=$4
+        set MedalTime=$2, CustomMedalTime=$3, Reason=$4, DateModified=now()
         where AccountId=$1 and MapUid=$5
       `,
       [

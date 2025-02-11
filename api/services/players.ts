@@ -64,7 +64,7 @@ export class Players {
     return this.db.pool.query(
       `
         update Players
-        set Name=$2, Color=$3, DisplayName=$4
+        set Name=$2, Color=$3, DisplayName=$4, DateModified=now()
         where AccountId=$1
       `,
       [player.accountId, player.name, player.color, player.displayName]
