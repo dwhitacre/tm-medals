@@ -33,7 +33,8 @@ export class Player {
 
     if (!json?.accountid) throw new Error("Failed to get accountId");
     if (!json.name) throw new Error("Failed to get name");
-    if (!json.color) throw new Error("Failed to get color");
+    // if (!json.color) throw new Error("Failed to get color"); // TODO: support old clients
+    if (!json.color) json.color = "3F3";
 
     const player = new Player(json.accountid, json.name, json.color);
     if (json.datemodified) player.dateModified = json.datemodified;
