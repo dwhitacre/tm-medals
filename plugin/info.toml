@@ -2,8 +2,9 @@
 name = "Player Medals"
 author = "DanOnTheMoon"
 category = "Race"
-version = "0.0.5"
+version = "0.0.6"
 siteid = 610
 
 [script]
+dependencies = ["NadeoServices"]
 optional_dependencies = ["mapinfo"]
