@@ -21,16 +21,16 @@ namespace View {
                 RenderCurrentPlayerMedalTime(mapUid, false);
                 RenderCurrentPlayerNoMedalTime(mapUid, false);
 
-                if (Services::Settings.medalWindow.showManage) {
+                if (Services::Settings.medalWindow.showManage && (Services::Settings.medalWindow.showManageWithOpenplanet || UI::IsOverlayShown())) {
                     UI::Separator();
 
-                    UI::BeginTabBar("##manager-tab-bar");
+                    if (Services::Settings.medalWindow.showManageTabs) UI::BeginTabBar("##manager-tab-bar");
 
-                    RenderMapManage(mapUid);
-                    RenderPlayerManage();
-                    RenderMedalTimeManage(mapUid);
+                    if (Services::Settings.medalWindow.showManagePlayer) RenderPlayerManage(Services::Settings.medalWindow.showManageTabs);
+                    if (Services::Settings.medalWindow.showManageMap) RenderMapManage(mapUid, Services::Settings.medalWindow.showManageTabs);
+                    if (Services::Settings.medalWindow.showManageMedalTime) RenderMedalTimeManage(mapUid, Services::Settings.medalWindow.showManageTabs);
 
-                    UI::EndTabBar();
+                    if (Services::Settings.medalWindow.showManageTabs) UI::EndTabBar();
                 }
 
                 UI::End();
@@ -131,6 +131,7 @@ namespace View {
         void RenderMapManage(const string&in mapUid, bool inTabBar = true) {
             if (!Services::Me.HasPermission(Domain::Permission::MapManage)) return;
             if (inTabBar && !UI::BeginTabItem("Map##manager-tab-bar")) return;
+            else if (!inTabBar && !UI::CollapsingHeader("Map")) return;
 
 #if DEPENDENCY_MAPINFO
             Domain::Map@ existingMap = cast<Domain::Map@>(Services::Copy.Get("mapManage_existingMap_" + mapUid, Services::Maps.GetMap(mapUid)));
@@ -221,6 +222,7 @@ namespace View {
         void RenderPlayerManage(bool inTabBar = true) {
             if (!Services::Me.HasPermission(Domain::Permission::PlayerManage)) return;
             if (inTabBar && !UI::BeginTabItem("Player##manager-tab-bar")) return;
+            else if (!inTabBar && !UI::CollapsingHeader("Player")) return;
 
             Domain::Player@ existingPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_existingPlayer", Services::CurrentPlayer.player));
             Domain::Player@ currentPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_currentPlayer", Services::Game::GetActivePlayer()));
@@ -295,6 +297,7 @@ namespace View {
         void RenderMedalTimeManage(const string&in mapUid, bool inTabBar = true) {
             if (!Services::Me.HasPermission(Domain::Permission::MedalTimesManage)) return;
             if (inTabBar && !UI::BeginTabItem("Medal Time##manager-tab-bar")) return;
+            else if (!inTabBar && !UI::CollapsingHeader("Medal Time")) return;
 
             // TODO: add support for submitting the map from here if you also have map manage permission
             Domain::Map@ existingMap = Services::Maps.GetMap(mapUid);

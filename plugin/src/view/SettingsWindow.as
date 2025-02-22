@@ -70,6 +70,12 @@ namespace View {
             Services::Settings.medalWindow.delta = UI::Checkbox("Show delta", Services::Settings.medalWindow.delta);
             if (!Services::Me.HasViewPermissionOnly()) {
                 Services::Settings.medalWindow.showManage = UI::Checkbox("Show manager", Services::Settings.medalWindow.showManage);
+                Services::Settings.medalWindow.showManageWithOpenplanet = !UI::Checkbox("Hide manager when Openplanet is hidden##medalmanager", !Services::Settings.medalWindow.showManageWithOpenplanet);
+                Services::Settings.medalWindow.showManageTabs = UI::Checkbox("Show manager as tabs", Services::Settings.medalWindow.showManageTabs);
+                Tooltip("If unchecked, the manager will show as a collapsible headers.");
+                Services::Settings.medalWindow.showManagePlayer = UI::Checkbox("Show player manage in manager", Services::Settings.medalWindow.showManagePlayer);
+                Services::Settings.medalWindow.showManageMap = UI::Checkbox("Show map manage in manager", Services::Settings.medalWindow.showManageMap);
+                Services::Settings.medalWindow.showManageMedalTime = UI::Checkbox("Show medal time manage in manager", Services::Settings.medalWindow.showManageMedalTime);
             }
 
             UI::NewLine();
