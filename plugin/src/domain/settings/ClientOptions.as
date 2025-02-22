@@ -1,6 +1,6 @@
 [Setting hidden] string S_ApiUrl = "https://tm-medals.danonthemoon.dev/api";
 [Setting hidden] string S_ApiKey = "";
-[Setting hidden] bool S_ApiDebug = true;
+[Setting hidden] bool S_ApiDebug = false;
 [Setting hidden] uint64 S_ApiLatency = 0;
 
 namespace Domain {
