@@ -17,6 +17,10 @@ namespace Services {
             return pbsCache.GetAll();
         }
 
+        void UpdateCachePB(const string&in mapUid, Domain::PB@ pb) {
+            pbsCache.Set(mapUid, @pb);
+        }
+
         void FetchPB(const string&in mapUid) {
             auto pbs = client.FetchPBs({ mapUid });
             if (pbs.Length < 1) return;

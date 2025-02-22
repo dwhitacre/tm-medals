@@ -4,6 +4,9 @@
 
 namespace Services {
     bool MapLoading = false;
+    bool PBLoopEnabled = false;
+    bool PBLoopRunning = false;
+    uint64 PBLoopMs = 500;
 
     namespace Game {
         bool InMap() {
@@ -126,6 +129,39 @@ namespace Services {
 
             pb.score = score;
             return pb;
+        }
+
+        void ActivePlayerPBLoop() {
+            if (!PBLoopEnabled) return;
+            if (PBLoopRunning) return;
+            PBLoopRunning = true;
+
+            while (true) {
+                sleep(PBLoopMs);
+                if (Loading) continue;
+                if (PBsLoading) continue;
+                if (!InMap()) continue;
+
+                CTrackMania@ App = cast<CTrackMania@>(GetApp());
+                if (App.RootMap is null) continue;
+
+                auto mapUid = App.RootMap.EdChallengeId;
+                auto pb = PBs.GetPB(mapUid);
+                auto activePB = GetActivePlayerPB();
+                if (activePB is null) continue;
+
+                if (pb is null || pb.score != activePB.score) {
+                    trace("New personal best detected. Fetching..");
+                    // TODO: this cache update only needs to be done
+                    // because setting a PB with school mode enabled
+                    // will not update your remote PB and refetching
+                    // will just result in an endless null loop. so dumb.
+                    PBs.UpdateCachePB(mapUid, @activePB);
+
+                    // no way to test this without a plugin update. b/c of above
+                    PBs.FetchPB(mapUid);
+                }
+            }
         }
 
         Domain::MedalTime@ GetActivePlayerMedalTime() {

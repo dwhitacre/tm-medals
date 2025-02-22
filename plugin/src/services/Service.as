@@ -54,6 +54,10 @@ namespace Services {
         PBsLoading = false;
     }
 
+    void StartPBLoop() {
+        Game::ActivePlayerPBLoop();
+    }
+
     void Reset() {
         Icons.Clear();
         Copy.Clear();
