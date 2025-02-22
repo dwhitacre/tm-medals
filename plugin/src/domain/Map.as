@@ -10,6 +10,7 @@ namespace Domain {
         bool nadeo = false;
         
         uint8 get_index() const {
+            if (totdDate.Length > 0) return uint8(Text::ParseUInt(totdDate.SubStr(totdDate.Length - 2)) - 1);
             return uint8(Text::ParseUInt(name.SubStr(name.Length - 2)) - 1);
         }
 
@@ -30,6 +31,7 @@ namespace Domain {
             json["totdDate"] = this.totdDate;
             json["dateModified"] = this.dateModified;
             json["nadeo"] = this.nadeo;
+            json["index"] = this.index;
             return json;
         }
 
@@ -42,6 +44,7 @@ namespace Domain {
                 "campaignIndex",
                 "totdDate",
                 "nadeo",
+                "index",
                 "dateModified"
             };
         }

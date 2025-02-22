@@ -2,6 +2,7 @@ namespace Services {
     class IconsService : Service {
         UI::Texture@ icon32;
         UI::Texture@ icon512;
+        nvg::Texture@ iconUI;
 
         IconsService() {
             super();
@@ -23,9 +24,18 @@ namespace Services {
             return icon512;
         }
 
+        nvg::Texture@ GetIconUI() {
+            if (iconUI !is null) return iconUI;
+
+            @iconUI = nvg::LoadTexture("src/assets/players/" + CurrentPlayer.accountId + "_512.png");
+            if (iconUI is null) @iconUI = nvg::LoadTexture("src/assets/default_512.png");
+            return iconUI;
+        }
+
         void Clear() {
             @icon32 = null;
             @icon512 = null;
+            @iconUI = null;
         }
     }
 }

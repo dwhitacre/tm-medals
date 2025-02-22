@@ -91,6 +91,10 @@ namespace Domain {
 
         UIMedals() {}
 
+        bool IsEnabled() {
+            return this.enabled && (this.banner || this.end || this.pause || this.clubCampaign || this.liveCampaign || this.liveTotd || this.seasonalCampaign || this.start || this.totd || this.training);
+        }
+
         void Reset() {
             this.enabled = true;
             this.banner = true;

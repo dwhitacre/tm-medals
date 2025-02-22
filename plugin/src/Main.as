@@ -26,7 +26,7 @@ void Render() {
 }
 
 void RenderEarly() {
-    // DrawOverUI();
+    View::RenderUIMedals();
 }
 
 void RenderMenu() {
