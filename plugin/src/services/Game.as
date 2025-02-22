@@ -4,9 +4,7 @@
 
 namespace Services {
     bool MapLoading = false;
-    bool PBLoopEnabled = false;
     bool PBLoopRunning = false;
-    uint64 PBLoopMs = 500;
 
     namespace Game {
         bool InMap() {
@@ -132,14 +130,15 @@ namespace Services {
         }
 
         void ActivePlayerPBLoop() {
-            if (!PBLoopEnabled) return;
             if (PBLoopRunning) return;
             PBLoopRunning = true;
 
             while (true) {
-                sleep(PBLoopMs);
+                yield();
+                
                 if (Loading) continue;
                 if (PBsLoading) continue;
+                if (!Config.Get().pbLoopEnabled) continue;
                 if (!InMap()) continue;
 
                 CTrackMania@ App = cast<CTrackMania@>(GetApp());
@@ -161,6 +160,8 @@ namespace Services {
                     // no way to test this without a plugin update. b/c of above
                     PBs.FetchPB(mapUid);
                 }
+
+                sleep(Config.Get().pbLoopInterval);
             }
         }
 

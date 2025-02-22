@@ -11,6 +11,7 @@ namespace Services {
     FontsService@ Fonts = FontsService();;
     ReadyService@ Ready = ReadyService();
     MeService@ Me = MeService();
+    ConfigService@ Config = ConfigService();
     MapsService@ Maps = MapsService();
     PlayersService@ Players = PlayersService();
     MedalTimesService@ MedalTimes = MedalTimesService();
@@ -23,6 +24,7 @@ namespace Services {
         trace("Loading services..");
 
         Copy.Clear();
+        Config.Fetch();
         Me.Fetch();
         Maps.FetchMaps();
         Players.FetchPlayers();
@@ -67,6 +69,7 @@ namespace Services {
         Maps.Clear();
         Players.Clear();
         Me.Clear();
+        Config.Clear();
 
         LoadServices();
     }

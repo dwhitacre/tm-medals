@@ -2,22 +2,7 @@ void Main() {
     startnew(Services::StartReadyHealthCheck);
     startnew(Services::LoadServices);
     startnew(Services::StartPBLoop);
-
-    // bool inMap = InMap();
-    // bool wasInMap = false;
-
-    // while (true) {
-    //     yield();
-
-    //     inMap = InMap();
-
-    //     if (wasInMap != inMap) {
-    //         wasInMap = inMap;
-
-    //         if (inMap)
-    //             GetMapInfoAsync();
-    //     }
-    // }
+    // TODO: active map loop?
 }
 
 void Render() {
