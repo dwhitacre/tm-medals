@@ -25,6 +25,10 @@ export class MedalTime {
     if (json.reason) medalTimes.reason = json.reason;
     if (json.datemodified) medalTimes.dateModified = json.datemodified;
 
+    if (medalTimes.medalTime >= 2147483647) medalTimes.medalTime = -1;
+    if (medalTimes.customMedalTime >= 2147483647)
+      medalTimes.customMedalTime = -1;
+
     return medalTimes;
   }
 

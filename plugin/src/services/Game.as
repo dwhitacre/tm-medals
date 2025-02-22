@@ -174,6 +174,12 @@ namespace Services {
             Domain::MedalTime@ medalTime = null;
             try {
                 @medalTime = Domain::MedalTime(map.mapUid, pb.score, player.accountId);
+
+                if (CurrentPlayer.HasMedalTime(map.mapUid)) {
+                    auto currentPlayerMedalTime = CurrentPlayer.GetMedalTime(map.mapUid);
+                    medalTime.customMedalTime = currentPlayerMedalTime.customMedalTime;
+                    medalTime.reason = currentPlayerMedalTime.reason;
+                }
             } catch {
                 return null;
             }

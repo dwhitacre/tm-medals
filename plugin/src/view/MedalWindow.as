@@ -21,7 +21,7 @@ namespace View {
                 RenderCurrentPlayerMedalTime(mapUid, false);
                 RenderCurrentPlayerNoMedalTime(mapUid, false);
 
-                if (Services::Settings.medalWindow.showManage && (Services::Settings.medalWindow.showManageWithOpenplanet || UI::IsOverlayShown())) {
+                if (!Services::Loading && Services::Settings.medalWindow.showManage && (Services::Settings.medalWindow.showManageWithOpenplanet || UI::IsOverlayShown())) {
                     UI::Separator();
 
                     if (Services::Settings.medalWindow.showManageTabs) UI::BeginTabBar("##manager-tab-bar");
@@ -251,7 +251,7 @@ namespace View {
                 return;
             }
 
-            UI::BeginDisabled(Services::MedalTimeSubmitting || currentMedalTime.medalTime < 0 || currentMedalTime.medalTime > 2147483647);
+            UI::BeginDisabled(Services::MedalTimeSubmitting || (currentMedalTime.medalTime < 0 || currentMedalTime.medalTime > 2147483647) && currentMedalTime.customMedalTime == -1);
             if (UI::Button("Submit" + (Services::MedalTimeSubmitting ? "ing.." : "") + " New Medal Time")) {
                 trace("Submitting new Medal Time: " + currentMedalTime.mapUid + "_" + currentMedalTime.accountId);
                 startnew(Services::SubmitMedalTime, currentMedalTime);
@@ -286,7 +286,7 @@ namespace View {
             UI::EndDisabled();
             if (!MedalTimeForm("medalTimeManage_currentMedalTime", currentMedalTime, Services::MedalTimeSubmitting, false, true)) return;
 
-            UI::BeginDisabled(Services::MedalTimeSubmitting);
+            UI::BeginDisabled(Services::MedalTimeSubmitting || ((currentMedalTime.medalTime < 0 || currentMedalTime.medalTime > 2147483647) && currentMedalTime.customMedalTime == -1));
             if (UI::Button("Updat" + (Services::MedalTimeSubmitting ? "ing.." : "e") + " MedalTime")) {
                 trace("Updating MedalTime: " + existingMedalTime.mapUid + "_" + existingMedalTime.accountId);
                 startnew(Services::SubmitMedalTime, currentMedalTime);
