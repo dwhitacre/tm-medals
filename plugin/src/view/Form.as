@@ -13,23 +13,44 @@ namespace View {
         }
 
         UI::BeginDisabled(disabled);
-
         map.name = UI::InputText(Label("Name", id, "name"), map.name).Trim();
         if (showTooltips) Tooltip("Format must match 'Winter 2025 - 01' for official campaigns.");
+        UI::EndDisabled();
 
+        UI::BeginDisabled(map.totdDate.Length > 0 || map.campaign.Length > 0 || map.campaignIndex > -1 || disabled);
         map.nadeo = UI::Checkbox(Label("Is map in official campaign?", id, "nadeo"), map.nadeo);
         if (showTooltips) Tooltip("Currently this uses map author to determine, so it may not be accurate. Change the value if it's wrong. Leave unchecked if totd.");
 
+        if (map.nadeo) {
+            map.totdDate = "";
+            map.campaign = "";
+            map.campaignIndex = -1;
+        }
+        UI::EndDisabled();
+
+        UI::BeginDisabled(map.nadeo || map.campaign.Length > 0 || map.campaignIndex > -1 || disabled);
         map.totdDate = UI::InputText(Label("TOTD Date", id, "totdDate"), map.totdDate).Trim();
         if (showTooltips) Tooltip("Format must match '2025-01-01'. Leave empty if not a track of the day.");
+        
+        if (map.totdDate.Length > 0) {
+            map.nadeo = false;
+            map.campaign = "";
+            map.campaignIndex = -1;
+        }
+        UI::EndDisabled();
 
+        UI::BeginDisabled(map.nadeo || map.totdDate.Length > 0 || disabled);
         map.campaign = UI::InputText(Label("Campaign", id, "campaign"), map.campaign).Trim();
         if (showTooltips) Tooltip("Leave empty if official or totd. Not currently supported.");
+
+        if (map.campaign.Length > 0) {
+            map.nadeo = false;
+            map.totdDate = "";
+        }
 
         auto campaignIndex = UI::InputInt(Label("Campaign Index", id, "campaignIndex"), map.campaignIndex);
         if (campaignIndex >= -1) map.campaignIndex = campaignIndex;
         if (showTooltips) Tooltip("Leave -1 if official or totd. Not currently supported.");
-
         UI::EndDisabled();
 
         return true;
