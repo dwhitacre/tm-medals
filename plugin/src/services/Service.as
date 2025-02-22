@@ -25,7 +25,7 @@ namespace Services {
         Copy.Clear();
         Me.Fetch();
         Maps.FetchMaps();
-        CurrentPlayer.Fetch();
+        Players.FetchPlayers();
         CurrentPlayer.FetchMedalTimes();
         startnew(StartPBFetch);
 
@@ -55,6 +55,7 @@ namespace Services {
     }
 
     void Reset() {
+        Icons.Clear();
         Copy.Clear();
         CurrentPlayer.Clear();
         PBs.Clear();

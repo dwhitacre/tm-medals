@@ -15,6 +15,34 @@ namespace View {
         }
 
         void RenderGeneral() {
+            Header("Medal Time Player");
+            Tooltip("Players offer different medal times and maps.");
+
+            UI::BeginDisabled(Services::Loading);
+            
+            if (UI::BeginCombo("##currentplayer", Services::CurrentPlayer.exists ? Services::CurrentPlayer.player.viewName : "Select a player")) {
+                auto players = Services::Players.GetPlayers();
+                for (uint i = 0; i < players.Length; i++) {
+                    auto player = cast<Domain::Player@>(players[i]);
+                    if (UI::Selectable(player.viewName, Services::CurrentPlayer.accountId == player.accountId)) {
+                        trace("Selecting new player: " + player.accountId + ", " + player.viewName);
+                        Services::CurrentPlayer.accountId = player.accountId;
+                        
+                        // TODO: This is probably overkill, but reloading the plugin
+                        // was the previous way to set a new current player.
+                        startnew(Services::Reset);
+                    }
+                }
+
+                UI::EndCombo();
+            }
+
+            UI::EndDisabled();
+            
+            UI::NewLine();
+            UI::Separator();
+            UI::NewLine();
+
             Header("Main Window");
 
             if (UI::Button("Reset to default##main")) {
@@ -93,19 +121,6 @@ namespace View {
             Services::Settings.uiMedals.pause = UI::Checkbox("Pause menu", Services::Settings.uiMedals.pause);
             Services::Settings.uiMedals.end = UI::Checkbox("End menu", Services::Settings.uiMedals.end);
             Tooltip("Only shows in solo");
-
-            UI::NewLine();
-            UI::Separator();
-            UI::NewLine();
-
-            Header("Current Player");
-            Tooltip("Reload the plugin after changing these settings.");
-
-            if (UI::Button("Reset to default##currentplayer")) {
-                Services::CurrentPlayer.Reset();
-            }
-
-            Services::CurrentPlayer.accountId = UI::InputText("Account Id", Services::CurrentPlayer.accountId);
 
             UI::NewLine();
         }

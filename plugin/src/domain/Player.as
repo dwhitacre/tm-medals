@@ -64,8 +64,8 @@ namespace Domain {
             auto otherPlayer = cast<Player@>(other);
             if (otherPlayer is null) return 0;
 
-            if (this.viewName < otherPlayer.viewName) return -1;
-            if (this.viewName > otherPlayer.viewName) return 1;
+            if (this.viewName.ToLower() < otherPlayer.viewName.ToLower()) return 1;
+            if (this.viewName.ToLower() > otherPlayer.viewName.ToLower()) return -1;
             return 0;
         }
 

@@ -15,6 +15,10 @@ namespace Services {
             return cast<Domain::Player@>(playersCache.Get(accountId));
         }
 
+        array<Domain::Domain@>@ GetPlayers() {
+            return playersCache.GetAll();
+        }
+
         void FetchPlayer(const string&in accountId) {
             auto player = client.FetchPlayer(accountId);
             if (player is null) return;
