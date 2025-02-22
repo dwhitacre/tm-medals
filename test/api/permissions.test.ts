@@ -64,6 +64,16 @@ test("medaltimes:manage", async () => {
   response = await mapCreate({ apikey: adminApiKey });
   const mapUid = (await response.json()).map.mapUid;
 
+  response = await playerCreate({ apikey: adminApiKey });
+  const otherAccountId = (await response.json()).player.accountId;
+
+  response = await medalTimesCreate({
+    apikey,
+    accountId: otherAccountId,
+    mapUid,
+  });
+  expect(response.status).toBe(401);
+
   response = await medalTimesCreate({ apikey, mapUid, accountId });
   expect(response.status).toBe(200);
 });
