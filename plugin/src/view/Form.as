@@ -1,4 +1,8 @@
 namespace View {
+    // TODO: these forms should handle the action buttons
+    // such that they can be disabled if the form data
+    // is invalid
+
     bool MapForm(const string&in id, Domain::Map@ map, bool disabled = false, bool showAlwaysDisabled = true, bool showTooltips = true) {
         if (id.Length < 1) return false;
         if (map is null) return false;
@@ -73,7 +77,7 @@ namespace View {
         player.name = UI::InputText(Label("Name", id, "name"), player.name).Trim();
         if (showTooltips) Tooltip("In game name. Only change if inaccurate. Updating display name is preferred to change viewable name.");
 
-        player.color = UI::InputText(Label("Color (3 Hex)", id, "color"), player.color).Trim().ToUpper();
+        player.color = UI::InputText(Label("Color (3 Hex)", id, "color"), player.color, UI::InputTextFlags::CharsHexadecimal).Trim().ToUpper();
         if (showTooltips) Tooltip("Format must match 'FFF'. Must be 3 characters and valid hex (0-9, A-F).");
 
         player.displayName = UI::InputText(Label("Display Name", id, "displayName"), player.displayName).Trim();

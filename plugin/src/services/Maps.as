@@ -5,6 +5,9 @@ namespace Services {
         Domain::Cache@ mapsCache = Domain::Cache();
         Domain::Cache@ campaignsCache = Domain::Cache();
 
+        // TODO: updating an existing map such that it moves to a new campaign
+        // will not remove the map from the old campaign. resetting the cache
+        // in the plugin manually fixes the state for the user
         void addMapToCache(Domain::Map@ map) {
             if (map is null) return;
 
