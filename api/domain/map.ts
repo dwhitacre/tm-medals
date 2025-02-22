@@ -18,11 +18,12 @@ export class Map {
     if (!json.name) throw new Error("Failed to get name");
 
     const map = new Map(json.mapuid, json.authortime, json.name);
-    if (json.campaign) map.campaign = json.campaign;
-    if (json.campaignindex) map.campaignIndex = json.campaignindex;
-    if (json.totddate) map.totdDate = json.totddate;
+    if (json.campaign || json.campaign === "") map.campaign = json.campaign;
+    if (json.campaignindex || json.campaignindex === 0)
+      map.campaignIndex = json.campaignindex;
+    if (json.totddate || json.totddate === "") map.totdDate = json.totddate;
     if (json.datemodified) map.dateModified = json.datemodified;
-    if (json.nadeo) map.nadeo = json.nadeo;
+    if (json.nadeo || json.nadeo === false) map.nadeo = json.nadeo;
 
     return map;
   }

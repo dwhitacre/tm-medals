@@ -101,7 +101,7 @@ test("create map", async () => {
   expect(json.map.campaign).toBeUndefined();
   expect(json.map.campaignIndex).toBeUndefined();
   expect(json.map.totdDate).toBeUndefined();
-  expect(json.map.nadeo).toBeUndefined();
+  expect(json.map.nadeo).toBeFalse();
 });
 
 test("create map with properties", async () => {
@@ -179,7 +179,7 @@ test("create map repeat is an update", async () => {
   expect(json.map.campaign).toBeUndefined();
   expect(json.map.campaignIndex).toBeUndefined();
   expect(json.map.totdDate).toBeUndefined();
-  expect(json.map.nadeo).toBeUndefined();
+  expect(json.map.nadeo).toBeFalse();
 });
 
 test("create map with properties repeat is an update", async () => {
@@ -292,6 +292,62 @@ test("create map with properties repeat without properties doesnt override optio
   expect(json.map.campaignIndex).toEqual(campaignIndex);
   expect(json.map.totdDate).toEqual(totdDate);
   expect(json.map.nadeo).toEqual(nadeo);
+});
+
+test("create map with properties repeat with properties does override falsy optional parameters", async () => {
+  const apikey = await playerAdminCreate(pool);
+  const mapUid = faker.string.uuid();
+  const name = faker.word.words(3);
+  const authorTime = faker.number.int({ min: 1, max: 20000 });
+  const campaign = "Training";
+  const campaignIndex = 3;
+  const totdDate = "2024-01-01";
+  const nadeo = true;
+
+  const response = await mapCreate({
+    body: {
+      mapUid,
+      name,
+      authorTime,
+      campaign,
+      campaignIndex,
+      totdDate,
+      nadeo,
+    },
+    apikey,
+  });
+
+  expect(response.status).toEqual(200);
+
+  const name2 = faker.word.words(3);
+  const authorTime2 = faker.number.int({ min: 1, max: 20000 });
+
+  const response2 = await mapCreate({
+    body: {
+      mapUid,
+      name: name2,
+      authorTime: authorTime2,
+      campaign: "",
+      campaignIndex: 0,
+      totdDate: "",
+      nadeo: false,
+    },
+    apikey,
+  });
+
+  expect(response2.status).toEqual(200);
+
+  const mapResponse = await mapGet(pool, mapUid);
+  const json = await mapResponse.json();
+
+  expect(json.map).toBeDefined();
+  expect(json.map.mapUid).toEqual(mapUid);
+  expect(json.map.name).toEqual(name2);
+  expect(json.map.authorTime).toEqual(authorTime2);
+  expect(json.map.campaign).toEqual("");
+  expect(json.map.campaignIndex).toEqual(0);
+  expect(json.map.totdDate).toEqual("");
+  expect(json.map.nadeo).toEqual(false);
 });
 
 test("get campaign, campaign dne", async () => {
