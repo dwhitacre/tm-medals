@@ -63,9 +63,8 @@ namespace Services {
         // TODO: clearing the copy service caches shouldnt really be done
         // from here as the keys are tracked in view. but since its a coroutine
         // we cant clear it properly from the view atm.
-        Services::Copy.Remove("playerManage_existingPlayer_" + player.accountId);
-        Services::Copy.Remove("playerManage_currentPlayer_" + player.accountId);
-
+        Services::Copy.Remove("playerManage_existingPlayer");
+        Services::Copy.Remove("playerManage_currentPlayer");
 
         PlayerSubmitting = false;
         trace("Player submitted.");

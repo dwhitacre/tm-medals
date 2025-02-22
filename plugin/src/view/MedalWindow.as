@@ -191,7 +191,20 @@ namespace View {
         void RenderPlayerManageExistingPlayer(Domain::Player@ existingPlayer, Domain::Player@ currentPlayer) {
             if (existingPlayer is null) return;
             if (currentPlayer is null) return;
-            if (currentPlayer.accountId != existingPlayer.accountId) return;
+            
+            // TODO: Add support for admin to submit player information for other players.
+            if (currentPlayer.accountId != existingPlayer.accountId) {
+                UI::Text("Current player does not match your player.");
+
+                UI::BeginDisabled();
+                UI::InputText(Label("Current Account Id", "medalTimeManage_existingPlayer", "accountId"), existingPlayer.accountId);
+                UI::InputText(Label("Your Account Id", "medalTimeManage_currentPlayer", "accountId"), currentPlayer.accountId);
+                UI::EndDisabled();
+
+                UI::NewLine();
+
+                return;
+            }
             
             if (!PlayerForm("playerManage_existingPlayer", existingPlayer, true, true, false)) return;
             UI::Separator();
@@ -208,10 +221,9 @@ namespace View {
         void RenderPlayerManage(bool inTabBar = true) {
             if (!Services::Me.HasPermission(Domain::Permission::PlayerManage)) return;
             if (inTabBar && !UI::BeginTabItem("Player##manager-tab-bar")) return;
-            
-            auto accountId = Services::CurrentPlayer.accountId;
-            Domain::Player@ existingPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_existingPlayer_" + accountId, Services::CurrentPlayer.player));
-            Domain::Player@ currentPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_currentPlayer_" + accountId, Services::Game::GetActivePlayer()));
+
+            Domain::Player@ existingPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_existingPlayer", Services::CurrentPlayer.player));
+            Domain::Player@ currentPlayer = cast<Domain::Player@>(Services::Copy.Get("playerManage_currentPlayer", Services::Game::GetActivePlayer()));
 
             RenderPlayerManageNewPlayer(existingPlayer, currentPlayer);
             RenderPlayerManageExistingPlayerNoCurrent(existingPlayer, currentPlayer);
@@ -220,9 +232,9 @@ namespace View {
             UI::SameLine();
             UI::BeginDisabled(Services::PlayerSubmitting);
             if (UI::Button("Reset")) {
-                trace("Resetting local cache player: " + accountId);
-                Services::Copy.Remove("playerManage_existingPlayer_" + accountId);
-                Services::Copy.Remove("playerManage_currentPlayer_" + accountId);
+                trace("Resetting local cache player..");
+                Services::Copy.Remove("playerManage_existingPlayer");
+                Services::Copy.Remove("playerManage_currentPlayer");
             }
             UI::EndDisabled();
 
@@ -315,11 +327,11 @@ namespace View {
             // TODO: Add support for admin to submit medal times for other players.
             Domain::Player@ currentPlayer = Services::Game::GetActivePlayer();
             if (currentPlayer is null || existingPlayer.accountId != currentPlayer.accountId) {
-                UI::Text("Current player does not match your player. Cannot submit medal times.");
+                UI::Text("Current player does not match your player.");
 
                 UI::BeginDisabled();
-                UI::InputText(Label("Current Account Id", "medalTimeManage_existingPlayer", "accountId"), accountId);
-                UI::InputText(Label("Your Account Id", "medalTimeManage_currentPlayer", "accountId"), accountId);
+                UI::InputText(Label("Current Account Id", "medalTimeManage_existingPlayer", "accountId"), existingPlayer.accountId);
+                UI::InputText(Label("Your Account Id", "medalTimeManage_currentPlayer", "accountId"), currentPlayer.accountId);
                 UI::EndDisabled();
 
                 if (inTabBar) UI::EndTabItem();
