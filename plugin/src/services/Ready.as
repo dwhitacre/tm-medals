@@ -24,7 +24,7 @@ namespace Services {
             while (true) {
                 yield();
 
-                if (!Config.Get().healthCheckEnabled) continue;
+                if (Config.Get() is null || !Config.Get().healthCheckEnabled) continue;
                  
                 if (!IsReady()) {
                     isHealthy = false;

@@ -138,7 +138,7 @@ namespace Services {
                 
                 if (Loading) continue;
                 if (PBsLoading) continue;
-                if (!Config.Get().pbLoopEnabled) continue;
+                if (Config.Get() is null || !Config.Get().pbLoopEnabled) continue;
                 if (!InMap()) continue;
 
                 CTrackMania@ App = cast<CTrackMania@>(GetApp());
