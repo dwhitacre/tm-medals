@@ -237,6 +237,7 @@ namespace View {
                         continue;
 
                     if (lastYear != campaign.year) {
+                        if (lastYear > 0) UI::NewLine();
                         UI::PushFont(Services::Fonts.GetHeader());
                         UI::SeparatorText(tostring(campaign.year + 2020));
                         UI::PopFont();
@@ -259,8 +260,7 @@ namespace View {
                         selected = true;
                     }
 
-                    if (colored)
-                        UI::PopStyleColor(3);
+                    if (colored) UI::PopStyleColor(3);
 
                     if ((campaign.month - 1) % 3 > 0)
                         UI::SameLine();
